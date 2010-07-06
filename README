@@ -1,0 +1,10 @@
+storm runner redo:
+    by Eric Driggers
+
+To Run:
+    run "python main.py"
+
+required python modules: 
+    pygame 
+    
+tested with python version 2.6

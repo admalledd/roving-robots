@@ -1,0 +1,28 @@
+
+version 0.0.6:
+    command test code hardcoded in (press enter to run each code block)
+    
+    item subsystem updated
+    
+    found a graphics artist willing to help (thanks Evan!) new tiles, and such shall apear soon
+    working with a friend about the sounds (engine, and other background sounds)
+    
+    added project to GitHub.com
+    
+version 0.0.5:
+    finalized main map loading system (map_loader.py)
+    first item (energy test)
+    
+    start item subsystem
+    
+    start command subsystem
+    
+    
+version 0.0.3:
+    new map loading system being tested
+    first vehicle test code
+
+
+version 0.0.1:
+    first version, basic map loading, and tile testing
+    

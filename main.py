@@ -36,9 +36,7 @@ def main():
                 pygame.quit()
                 return None
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
-                mouse.cur_selected = map.map.click_engine(event.pos)
-                if lib.common.debug > 0:
-                    print "cur:%s   prev:%s"%(mouse.cur_selected,mouse.prev_selected)
+                mouse.click_engine(event.pos)
         ##map no longer is in charge of events...
         #map.map.events(events)
         map.map.draw(screen)

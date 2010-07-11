@@ -37,6 +37,11 @@ class code(object):
 class interface(object):
     def __init__(self,robot):
         self.ro = robot
+        if self.ro.code:
+            self.code = self.ro.code
+        else:
+            self.code = code(self.ro)
+    def click_engine(self,pos):
     
     @lib.decorators.disabled
     def draw(self, screen):

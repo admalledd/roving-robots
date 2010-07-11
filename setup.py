@@ -12,7 +12,9 @@ setup(
                 "py2exe":{
                         'bundle_files': 2,
                         "optimize": 0,
-                        'excludes':['tcl','email','Tkinter','ssl','xml','numpy','_ssl']
+                        'excludes':["Tkconstants","Tkinter","tcl",'email','ssl','xml','numpy','_ssl'],
+                        'dll_excludes':['w9xpopen.exe'],
+                        'compressed':True
                 }
         }
 )

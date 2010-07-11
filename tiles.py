@@ -8,6 +8,7 @@ class tile(object):
     def __init__(self,type=None):
         if type==None:
             #get a random tile from the cache
+            #to be depreciated...
             self.set_tile()
         self.walkable=False
         

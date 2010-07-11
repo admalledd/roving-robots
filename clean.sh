@@ -1,7 +1,5 @@
-rem @echo off
-echo removing previous builds...
-rmdir /q /s build
-rmdir /q /s dist
+#!/bin/sh
 
-
-pause
+rm -r build/
+rm *.pyc
+rm lib/*.pyc

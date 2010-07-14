@@ -9,7 +9,7 @@ import lib.common
 
 import tiles
 
-from mouse import mouse
+import input
 import load_map
 import vehicle
 
@@ -26,6 +26,7 @@ def main():
     load_map.load_map('test_map')
     
     v=vehicle.rcx()
+    curview='map'
     while True:
         pygame.time.wait(10)
         

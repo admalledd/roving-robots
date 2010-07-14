@@ -77,54 +77,6 @@ class MAP(object):
         and re-blit it here.'''
         screen.blit(self.surf,self.main_rect)
     
-    @lib.decorators.disabled
-    def events(self,events):
-        '''figure out if we have to do anything to the map:
-        move
-        highlight
-        ((anything else?))
-        
-        
-        possible TODO:::
-          1)make it so that the self.loc cant move out side the realm of
-            possible tile locations?
-          
-          2)set up self.loc and movement stuff so that tile moves dont
-            happen every tile render? (iterating through every tile and 
-            making a rect just for that one render, then doing the moving
-            calculations...)
-                --DONE!, call the draw function with the self.surf as screen
-                    and the all the data is saved! yay! i LIKE the lazy way :D
-                    
-                    whats more is that i have made it do that if you change the 
-                    "self.loc" attribute, it re-renders the whole shebang.'''
-        for event in events:
-            if event.type == MOUSEBUTTONDOWN:
-                if self.main_rect.collidepoint(event.pos):
-                    for x in range(self.map_size[0]-1):
-                        for y in range(self.map_size[1]-1):
-                            try:
-                                #set current grid x and y locations
-                                xx=self.loc[0]+x
-                                yy=self.loc[1]+y
-                                if self.map[(xx,yy)][1].collidepoint(event.pos):
-                                    if self.map[(xx,yy)][2] == (255,0,0):
-                                        self.map[(xx,yy)][2] = (255,255,0)
-                                    else:
-                                        self.map[(xx,yy)][2]=(255,255,0)
-                            except KeyError:
-                                pass 
-            elif event.type == KEYDOWN:
-                if event.key == K_LEFT:
-                    self.loc=(self.loc[0]-1,self.loc[1])
-                elif event.key == K_RIGHT:
-                    self.loc=(self.loc[0]+1,self.loc[1])
-                elif event.key == K_UP:
-                    self.loc=(self.loc[0],self.loc[1]-1)
-                elif event.key == K_DOWN:
-                    self.loc=(self.loc[0],self.loc[1]+1)
-                    
-                    
     def click_engine(self,pos):
         '''return what tile was clicked. (tile pos only?)'''
         

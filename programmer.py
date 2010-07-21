@@ -42,7 +42,7 @@ class interface(object):
         else:
             self.code = code(self.ro)
     def click_engine(self,pos):
-    
+        pass
     @lib.decorators.disabled
     def draw(self, screen):
         screen.blit(self.surf, self.rect)

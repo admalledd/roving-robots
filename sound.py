@@ -21,17 +21,17 @@ if __name__ == '__main__':
     chan = pygame.mixer.Channel(0)
     
     chan.play(pre)
-    #chan.queue(mid)
-    chan.queue(post)
+    chan.queue(mid)
+    #chan.queue(post)
     #pygame.time.wait(10)
     while chan.get_queue():
         pygame.time.wait(10)
         print 'playing pre'
     
-    #chan.queue(mid)
-    #while chan.get_queue():
-    #    pygame.time.wait(10)
-    #    print 'playing mid'
+    chan.queue(post)
+    while chan.get_queue():
+        pygame.time.wait(10)
+        print 'playing mid'
     
     #pygame.time.wait(10)
     while chan.get_busy():

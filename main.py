@@ -18,10 +18,8 @@ def main():
     pygame.init()
     lib.common.set_directory()
     screen = pygame.display.set_mode((800, 600))
-    
     #load map tiles...
     tiles.find_tiles()
-    
     #load map... (can be called again(?) to change to a new map...)
     load_map.load_map('test_map')
     
@@ -37,11 +35,10 @@ def main():
                 pygame.quit()
                 return None
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
-                mouse.click_engine(event.pos)
-        ##map no longer is in charge of events...
-        #map.map.events(events)
+                pass
+                #input.mouse.click_engine(event.pos)
+                
         map.map.draw(screen)
-        
         v.events(events)
         v.draw(screen)
         

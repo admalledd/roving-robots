@@ -1,90 +1,92 @@
 import pygame
 from pygame.locals import *
+import math
 
-class button(object):
-    def __init__(self,text_norm,text_high=None,text_click=None):
-        
-        self.text_norm = text_norm
-        
-        if text_high:
-            self.text_high = text_high
-        else:
-            self.text_high = None
-            
-        if text_click:
-            self.text_click = text_click
-        else:
-            self.text_click = None
-        
-        self.surf = self.text_norm
-        self.click_tmp=False
-        self.clicked=False
-        
-        self.rect = self.text_norm.get_rect()
-        
-        
-    def events(self,events):
-        for event in events:
-            if event.type == MOUSEMOTION:#hoverover button
-                if self.rect.collidepoint(event.pos):
-                    if self.surf is self.text_norm:
-                        self.surf = self.text_high
-                else:
-                    self.surf = self.text_norm
-            elif event.type == MOUSEBUTTONDOWN:#click and hold over button
-                if self.rect.collidepoint(event.pos):
-                    self.surf = self.text_click
-                    self.click_tmp=True
-                else:
-                    self.click_tmp=False
-            elif event.type == MOUSEBUTTONUP:#click,hold,and release over button
-                if self.rect.collidepoint(event.pos):
-                    if self.click_tmp:
-                        self.clicked = True#variable for things to use to see if clicked...
-                        self.click_tmp=False
-                else:
-                    self.click_tmp=False
-                    self.clicked=False
-        if self.clicked == True:
-            return True
-    def draw(self,pos,surf):
-        self.rect.center= pos
-        surf.blit(self.surf,self.rect)
-        
-        
+from input import button,drag_button
+def dist(rect_a,rect_b):
+    '''rect_a == top block to snap to
+    rect_b    == bottom block to check'''
+    return math.sqrt(((rect_a.midbottom[0]-rect_b.midtop[0])**2)+((rect_a.midbottom[1]-rect_b.midtop[1])**2))
 class menu(object):
     def __init__(self):
         
         self.font = pygame.font.Font(None,48)
-        self.buttons = ( (button(self.font.render('start game',True,(0,0,255)).convert_alpha()
+        
+        self.clickable  =[ (button((300,160)
+                                ,self.font.render('start game',True,(0,0,255)).convert_alpha()
                                 ,self.font.render('start game',True,(255,0,00)).convert_alpha()
                                 ,self.font.render('start game',True,(0,255,0)).convert_alpha()
                                 )
-                            ,(300,160)
+                            ,self.start
                          ),
-                         (button(self.font.render('credits',True,(0,0,255)).convert_alpha()
-                                ,self.font.render('credits',True,(255,0,00)).convert_alpha()
+                         (button((300,240)
+                                ,self.font.render('credits',True,(0,0,255)).convert_alpha()
+                                ,self.font.render('credits',True,(255,0,0)).convert_alpha()
                                 ,self.font.render('credits',True,(0,255,0)).convert_alpha()
                                 )
-                            ,(300,240)
+                            ,self.credits
                          )
-                       )
+                         ]
+        self.dragable   = [(drag_button((300,300)
+                                ,self.font.render('drag me',True,(0,0,255)).convert_alpha()
+                                ,self.font.render('drag me',True,(255,0,0)).convert_alpha()
+                                ,self.font.render('drag me',True,(0,255,0)).convert_alpha()
+                                )
+                         )
+                         ]
+        self.receptical = []
+        
+        
+        
+        self.hub_img = self.font.render('mount me',True,(0,0,255)).convert_alpha()
+        self.hub_rect = self.hub_img.get_rect()
+        self.hub_rect.topleft = (500,200)
+        
         
         self.surf = pygame.Surface((800, 600))
+    def add_click_btn(self, btn, func):
+        self.clickable.append(btn)
+        
+    def add_drag_btn(self, btn):
+        self.dragable.append(btn)
+        
+    def add_receptical_btn(self,btn):
+        self.receptical.append(btn)
+        
     def events(self,events):
-        for btn,pos in self.buttons:
-            btn.events(events) 
+        for btn,func in self.clickable:
+            var =  btn.events(events)
+            if var:
+                func(btn)
+        for btn in self.dragable:
+            if btn.events(events):
+                self.dragged(btn)
         for event in events:
             if event.type == MOUSEBUTTONUP and event.button == 1:
-                print self.buttons[0][0].clicked
-    def render(self):
-        for btn,pos in self.buttons:
-            btn.draw(pos,self.surf)
-        #self.opt1.draw((300,160),self.surf)
-        
+                print event.pos
+    
     def draw(self,screen):
-        self.render()
-        screen.blit(self.surf,(0,0))
+        for btn,func in self.clickable:
+            btn.draw(screen)
+        
+        for btn in self.dragable:
+            btn.draw(screen)
+            
+        screen.blit(self.hub_img,self.hub_rect)
+        pygame.draw.rect(screen, (255,255,255), self.hub_rect, 1)
+        
+        
+    def start(self,btn):
+        print 'start clicked'
+    def credits(self,btn):
+        print 'credits clicked'
+    def dragged(self,btn):
+        print 'button dragged'
+        
+        d = dist(self.hub_rect,btn.rect)#find distance between midtop and midbottom
+        print d
+        if d < 15:
+            btn.rect.midtop=self.hub_rect.midbottom
         
         
 if __name__=='__main__':
@@ -102,7 +104,8 @@ if __name__=='__main__':
         for event in events:
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
-                break
+                import sys
+                sys.exit()
         me.events(events)
         me.draw(screen)
         

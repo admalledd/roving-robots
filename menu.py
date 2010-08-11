@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import math
 
-from input import button,drag_button
+from input import *
 def dist(rect_a,rect_b):
     '''rect_a == top block to snap to
     rect_b    == bottom block to check'''
@@ -13,11 +13,11 @@ class menu(object):
         self.font = pygame.font.Font(None,48)
         
         self.clickable  =[ (button((300,160)
-                                ,self.font.render('start game',True,(0,0,255)).convert_alpha()
-                                ,self.font.render('start game',True,(255,0,00)).convert_alpha()
-                                ,self.font.render('start game',True,(0,255,0)).convert_alpha()
+                                ,self.font.render('forward_spawn',True,(0,0,255)).convert_alpha()
+                                ,self.font.render('forward_spawn',True,(255,0,00)).convert_alpha()
+                                ,self.font.render('forward_spawn',True,(0,255,0)).convert_alpha()
                                 )
-                            ,self.start
+                            ,self.spawn_fwd
                          ),
                          (button((300,240)
                                 ,self.font.render('credits',True,(0,0,255)).convert_alpha()
@@ -27,33 +27,32 @@ class menu(object):
                             ,self.credits
                          )
                          ]
-        self.dragable   = [(drag_button((300,300)
+        self.dragable   = [(fwd_btn((300,300)
                                 ,self.font.render('drag me',True,(0,0,255)).convert_alpha()
                                 ,self.font.render('drag me',True,(255,0,0)).convert_alpha()
                                 ,self.font.render('drag me',True,(0,255,0)).convert_alpha()
                                 )
                          )
                          ]
-        self.receptical = []
+        self.receptical = [dock_button((500,200)
+                                ,self.font.render('mount me',True,(0,0,255)).convert_alpha()
+                                ,self.font.render('mount me',True,(255,0,0)).convert_alpha()
+                                ,self.font.render('mount me',True,(0,255,0)).convert_alpha()
+                                )
+                          ]
         
-        
-        
-        self.hub_img = self.font.render('mount me',True,(0,0,255)).convert_alpha()
-        self.hub_rect = self.hub_img.get_rect()
-        self.hub_rect.topleft = (500,200)
-        
+        self.dock_dist = 15
         
         self.surf = pygame.Surface((800, 600))
-    def add_click_btn(self, btn, func):
-        self.clickable.append(btn)
-        
     def add_drag_btn(self, btn):
         self.dragable.append(btn)
         
-    def add_receptical_btn(self,btn):
-        self.receptical.append(btn)
-        
+    def remove_drag_btn(self,btn):
+        self.dragable.remove(btn)
+        del btn    
+    
     def events(self,events):
+        '''TODO: drag/click through to ONLY one button...'''
         for btn,func in self.clickable:
             var =  btn.events(events)
             if var:
@@ -62,31 +61,62 @@ class menu(object):
             if btn.events(events):
                 self.dragged(btn)
         for event in events:
+            ##debug code stuff, remove for production
             if event.type == MOUSEBUTTONUP and event.button == 1:
                 print event.pos
-    
+            ##
+            if event.type == KEYDOWN:
+                if event.key == K_1:
+                    print self.dragable[0].dock
+                    print self.receptical[0].docked_btn
+                else:
+                    print event
     def draw(self,screen):
         for btn,func in self.clickable:
             btn.draw(screen)
         
         for btn in self.dragable:
             btn.draw(screen)
-            
-        screen.blit(self.hub_img,self.hub_rect)
-        pygame.draw.rect(screen, (255,255,255), self.hub_rect, 1)
+           
+        for btn in self.receptical:
+            btn.draw(screen)
         
+    def spawn_fwd(self,btn):
+        print 'fwd spawned'
+        b=fwd_btn((300,300)
+                   ,self.font.render('drag me',True,(0,0,255)).convert_alpha()
+                   ,self.font.render('drag me',True,(255,0,0)).convert_alpha()
+                   ,self.font.render('drag me',True,(0,255,0)).convert_alpha()
+                 )  
+        self.add_drag_btn(b)
         
-    def start(self,btn):
-        print 'start clicked'
     def credits(self,btn):
         print 'credits clicked'
     def dragged(self,btn):
         print 'button dragged'
         
-        d = dist(self.hub_rect,btn.rect)#find distance between midtop and midbottom
-        print d
-        if d < 15:
-            btn.rect.midtop=self.hub_rect.midbottom
+        for b in self.dragable:
+            if b.docked_btn:#has been docked, dont do the math then...
+                continue
+            elif hasattr(b,'is_dock') and b.is_dock:
+                if dist(b.rect,btn.rect) <= self.dock_dist:
+                    btn.rect.midtop=b.rect.midbottom
+                    print b
+                    print btn
+                    
+                    #flup... i have no idea... please help me...
+                    if b.dock(btn):
+                        return
+        for r in self.receptical:
+            if not r.docked_btn:
+                if dist(r.rect,btn.rect) <= self.dock_dist:
+                    btn.rect.midtop=r.rect.midbottom
+                    r.dock(btn)
+                    return
+        #d = dist(self.hub_rect,btn.rect)#find distance between midtop and midbottom
+        #print d
+        #if d < 15:
+        #    btn.rect.midtop=self.hub_rect.midbottom
         
         
 if __name__=='__main__':

@@ -67,7 +67,7 @@ class menu(object):
             ##
             if event.type == KEYDOWN:
                 if event.key == K_1:
-                    print self.dragable[0].dock
+                    print self.dragable[0].mount
                     print self.receptical[0].docked_btn
                 else:
                     print event
@@ -103,7 +103,7 @@ class menu(object):
                     btn.rect.midtop=b.rect.midbottom
                     print b
                     print btn
-                    
+                    print b.dock
                     #flup... i have no idea... please help me...
                     if b.dock(btn):
                         return
@@ -113,10 +113,6 @@ class menu(object):
                     btn.rect.midtop=r.rect.midbottom
                     r.dock(btn)
                     return
-        #d = dist(self.hub_rect,btn.rect)#find distance between midtop and midbottom
-        #print d
-        #if d < 15:
-        #    btn.rect.midtop=self.hub_rect.midbottom
         
         
 if __name__=='__main__':

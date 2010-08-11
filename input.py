@@ -91,7 +91,7 @@ class dock_button(button):
             return False
         else:
             self.docked_btn = btn
-            self.docked_btn.dock = self
+            self.docked_btn.mount = self
             
     def remove(self):
         '''to be defined, remove all docked items as well (eg we delete the entire dragged tree...)'''
@@ -104,13 +104,13 @@ class dock_button(button):
         super(dock_button,self).draw(surf)
         ##TODO::: 
         if self.docked_btn:
-            self.docked_btn.draw(surf)
+            self.docked_btn.draw(surf,True)
         
 class drag_button(button):
     def __init__(self,center,text_norm,text_high=None,text_click=None):
         super(drag_button,self).__init__(center,text_norm,text_high,text_click)
         
-        self.dock=None
+        self.mount=None
     def events(self,events):
         tmp = super(drag_button,self).events(events)
         for event in events:
@@ -120,7 +120,7 @@ class drag_button(button):
                         self.rect.center= event.pos
         return tmp
     def draw(self,surf,dock_override=False):
-        if self.dock:
+        if self.mount:
             if not dock_override:
                 return None
         
@@ -128,4 +128,14 @@ class drag_button(button):
         pygame.draw.rect(surf, (255,255,255), self.rect, 1)
         
 class fwd_btn(drag_button  , dock_button):
-    pass
+    
+    
+    def draw(self,surf,dock_override=False):
+        if self.mount:
+            if not dock_override:
+                return None
+        if self.docked_btn:
+            self.docked_btn.draw(surf,True)
+        surf.blit(self.surf,self.rect)
+        pygame.draw.rect(surf, (255,255,255), self.rect, 1)
+        

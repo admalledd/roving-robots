@@ -27,7 +27,7 @@ class menu(object):
                             ,self.credits
                          )
                          ]
-        self.dragable   = [(fwd_btn((300,300)
+        self.dragable   = [(drag_dock((300,300)
                                 ,self.font.render('drag me',True,(0,0,255)).convert_alpha()
                                 ,self.font.render('drag me',True,(255,0,0)).convert_alpha()
                                 ,self.font.render('drag me',True,(0,255,0)).convert_alpha()
@@ -83,7 +83,7 @@ class menu(object):
         
     def spawn_fwd(self,btn):
         print 'fwd spawned'
-        b=fwd_btn((300,300)
+        b=drag_dock((300,300)
                    ,self.font.render('drag me',True,(0,0,255)).convert_alpha()
                    ,self.font.render('drag me',True,(255,0,0)).convert_alpha()
                    ,self.font.render('drag me',True,(0,255,0)).convert_alpha()
@@ -101,10 +101,6 @@ class menu(object):
             elif hasattr(b,'is_dock') and b.is_dock:
                 if dist(b.rect,btn.rect) <= self.dock_dist:
                     btn.rect.midtop=b.rect.midbottom
-                    print b
-                    print btn
-                    print b.dock
-                    #flup... i have no idea... please help me...
                     if b.dock(btn):
                         return
         for r in self.receptical:

@@ -103,8 +103,8 @@ class dock_button(button):
     def draw(self,surf):
         super(dock_button,self).draw(surf)
         ##TODO::: 
-        if self.docked_btn:
-            self.docked_btn.draw(surf,True)
+        #if self.docked_btn:
+        #    self.docked_btn.draw(surf,True)
         
 class drag_button(button):
     def __init__(self,center,text_norm,text_high=None,text_click=None):
@@ -120,22 +120,27 @@ class drag_button(button):
                         self.rect.center= event.pos
         return tmp
     def draw(self,surf,dock_override=False):
-        if self.mount:
-            if not dock_override:
-                return None
-        
+        #if self.mount:
+        #    if not dock_override:
+        #        return None
+        #
         surf.blit(self.surf,self.rect)
         pygame.draw.rect(surf, (255,255,255), self.rect, 1)
         
-class fwd_btn(drag_button  , dock_button):
-    
-    
+class drag_dock(drag_button  , dock_button):
+    def __init__(self,center,text_norm,text_high=None,text_click=None):
+        super(drag_dock,self).__init__(center,text_norm,text_high,text_click)
+        
+        #name the button??
+        self.name = 'unkown'
+        #give button some data... (eg: distance, time, whatnot...)
+        self.data = (1,)
     def draw(self,surf,dock_override=False):
-        if self.mount:
-            if not dock_override:
-                return None
-        if self.docked_btn:
-            self.docked_btn.draw(surf,True)
+        #if self.mount:
+        #    if not dock_override:
+        #        return None
+        #if self.docked_btn:
+        #    self.docked_btn.draw(surf,True)
         surf.blit(self.surf,self.rect)
         pygame.draw.rect(surf, (255,255,255), self.rect, 1)
         

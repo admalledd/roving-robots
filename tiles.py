@@ -47,7 +47,7 @@ class tile(object):
         self._walkable=value
 
 class Tile_Cache(object):
-    def __init__(self):
+    def __init__(self,path):
         '''tile layout:::
         folder_xxxx.gif
         where xxxx is the direction and layout of the image.
@@ -57,7 +57,7 @@ class Tile_Cache(object):
         xxxa == top left'''
         self.cache={}
         
-        for dir, dirs, files in os.walk(os.path.join(lib.common.curdir,'data','tiles')):
+        for dir, dirs, files in os.walk(path):
             for f in files:#we only need to look at the files for this...
                 if f.endswith('.gif'):#check for img's only...
                     #see if similarly tagged img is in the cache...
@@ -89,7 +89,8 @@ class Tile_Cache(object):
         else: return self.cache[key]
 def find_tiles():
     global tile_cache
-    tile_cache=Tile_Cache()
+    tile_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','tiles'))
+    prog_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','tiles'))
     
 def set_tile(loc,type):
         map.map[loc][0].set_tile(type)

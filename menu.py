@@ -4,9 +4,11 @@ import math
 
 from input import *
 def dist(rect_a,rect_b):
-    '''rect_a == top block to snap to
-    rect_b    == bottom block to check'''
+    '''
+    rect_a == top block to snap to
+    rect_b == bottom block to check'''
     return math.sqrt(((rect_a.midbottom[0]-rect_b.midtop[0])**2)+((rect_a.midbottom[1]-rect_b.midtop[1])**2))
+    
 class menu(object):
     def __init__(self):
         

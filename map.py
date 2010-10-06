@@ -13,7 +13,7 @@ class MAP(object):
     that i might want to use it for some random tile data...
     
     possibly creature/objects on said tile?'''
-    def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475))):
+    def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
         if lib.common.debug > 0:
             self.font = pygame.font.Font(None, 18)
         self.map_size=r_c
@@ -27,8 +27,8 @@ class MAP(object):
                 tmp=pygame.Rect(self.sub_rect.topleft,self.sub_rect.size)
                 tmp.topleft=((self.sub_rect.width*x)+self.main_rect.left,(self.sub_rect.height*y)+self.main_rect.top)
                 color = (255,255,0)
-                #print color
-                self.map[(x,y)]=[tile(),tmp,color]
+                #set map items::: tile class, rect, and grid color
+                self.map[(x,y)]=[tclass(),tmp,color]
         self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
         
         self.loc=(0,0)

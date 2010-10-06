@@ -36,15 +36,16 @@ class tile(object):
         screen.blit(self.surf,rect)
         if self.item:
             self.item.draw(screen,rect)
-    @lib.decorators.propget
-    def walkable(self):
-        if self.item:
-            return False
-        else:
-            return self._walkable
-    @lib.decorators.propset
-    def walkable(self, value):
-        self._walkable=value
+    @lib.decorators.property
+    def walkable():
+        def fget(self):
+            if self.item:
+                return False
+            else:
+                return self._walkable
+    
+        def fset(self, value):
+            self._walkable=value
 
 class Tile_Cache(object):
     def __init__(self,path):
@@ -59,7 +60,7 @@ class Tile_Cache(object):
         
         for dir, dirs, files in os.walk(path):
             for f in files:#we only need to look at the files for this...
-                if f.endswith('.gif'):#check for img's only...
+                if f.endswith('.gif') or f.endswith('.png'):#check for img's only...
                     #see if similarly tagged img is in the cache...
                     imgname=f.split('.')[0].split('_')[1]
                     if imgname in self.cache:
@@ -90,7 +91,7 @@ class Tile_Cache(object):
 def find_tiles():
     global tile_cache
     tile_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','tiles'))
-    prog_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','tiles'))
+    prog_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','gui','programmer'))
     
 def set_tile(loc,type):
         map.map[loc][0].set_tile(type)

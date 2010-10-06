@@ -3,40 +3,20 @@
 import sys
 
 #class these are used on must inherit object or a sub class of object...
-
-def propget(func):
-    locals = sys._getframe(1).f_locals
-    name = func.__name__
-    prop = locals.get(name)
-    if not isinstance(prop, property):
-        prop = property(func, doc=func.__doc__)
-    else:
-        doc = prop.__doc__ or func.__doc__
-        prop = property(func, prop.fset, prop.fdel, doc)
-    return prop
-
-def propset(func):
-    locals = sys._getframe(1).f_locals
-    name = func.__name__
-    prop = locals.get(name)
-    if not isinstance(prop, property):
-        prop = property(None, func, doc=func.__doc__)
-    else:
-        doc = prop.__doc__ or func.__doc__
-        prop = property(prop.fget, func, prop.fdel, doc)
-    return prop
-
-def propdel(func):
-    locals = sys._getframe(1).f_locals
-    name = func.__name__
-    prop = locals.get(name)
-    if not isinstance(prop, property):
-        prop = property(None, None, func, doc=func.__doc__)
-    else:
-        prop = property(prop.fget, prop.fset, func, prop.__doc__)
-    return prop
+def property(function):
+    keys = 'fget', 'fset', 'fdel'
+    func_locals = {'doc':function.__doc__}
+    def probe_func(frame, event, arg):
+        if event == 'return':
+            locals = frame.f_locals
+            func_locals.update(dict((k, locals.get(k)) for k in keys))
+            sys.settrace(None)
+        return probe_func
+    sys.settrace(probe_func)
+    function()
+    return property(**func_locals)
     
-    
+
     
     
     
@@ -98,7 +78,7 @@ class memoized(object):
 def unchanged(func):
     "This decorator doesn't add any behavior"
     return func
-
+@simple_decorator
 def disabled(func):
     "This decorator disables the provided function, and does nothing"
     def empty_func(*args,**kargs):

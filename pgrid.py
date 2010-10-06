@@ -35,16 +35,15 @@ class button(object):
         screen.blit(self.surf,rect)
         if self.item:
             self.item.draw(screen,rect)
-    @lib.decorators.property
-    def walkable():
-        def fget(self):
-            if self.item:
-                return False
-            else:
-                return self._walkable
-    
-        def fset(self, value):
-            self._walkable=value
+    @lib.decorators.propget
+    def walkable(self):
+        if self.item:
+            return False
+        else:
+            return self._walkable
+    @lib.decorators.propset
+    def walkable(self, value):
+        self._walkable=value
 
 
 def test():

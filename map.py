@@ -95,19 +95,18 @@ class MAP(object):
                         pass
         return (-1,-1)
     
-    @lib.decorators.property
-    def loc():
-        def fget(self):
-            '''this is perhaps one of my favorite little python hidden secrets:
-            object attribute decorators... whenever i "get" the variable
-            "self.loc" this function runs'''
-            return self._loc
-
-        def fset(self, value):
-            '''but, when i "set" self.loc, this function runs! even more, this 
-            way, when i move the map, (changing the top left number self.loc)
-            i re-render it!!
-            
-            now, if only there was a way to get pydev to understand this...'''
-            self._loc=value
-            self.render(self.surf)
+    @lib.decorators.propget
+    def loc(self):
+        '''this is perhaps one of my favorite little python hidden secrets:
+        object attribute decorators... whenever i "get" the variable
+        "self.loc" this function runs'''
+        return self._loc
+    @lib.decorators.propset
+    def loc(self, value):
+        '''but, when i "set" self.loc, this function runs! even more, this 
+        way, when i move the map, (changing the top left number self.loc)
+        i re-render it!!
+        
+        now, if only there was a way to get pydev to understand this...'''
+        self._loc=value
+        self.render(self.surf)

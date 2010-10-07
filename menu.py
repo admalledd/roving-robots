@@ -57,6 +57,7 @@ class menu(object):
             var =  btn.events(events)
             if var:
                 func(btn)
+                break#break out of events if clciked?
         for btn in self.dragable:
             if btn.events(events):
                 self.dragged(btn)
@@ -95,8 +96,12 @@ class menu(object):
     def dragged(self,btn):
         print 'button dragged'
         
+        #if button is at top of tree... ?
+        
+        #if button is on bottom, remove from stack...
+        
         for b in self.dragable:
-            if b.docked_btn:#has been docked, dont do the math then...
+            if b.docked_btn:#has been docked, ergo, dont do any math...
                 continue
             elif hasattr(b,'is_dock') and b.is_dock:
                 if dist(b.rect,btn.rect) <= self.dock_dist:

@@ -45,7 +45,51 @@ class button(object):
     def walkable(self, value):
         self._walkable=value
 
-
+class block(object):
+    def __init__(self,img,lable,num=None):
+        '''example init:::
+        block(os.path.join(~~~~~),pygame.font.render(~~~~~),1)'''
+        self.img = lib.common.load_img(img)
+        self.lable = lable
+        if num is not None:
+            self.num = num
+        pass
+    def link_up(self):
+        pass
+    def link_down(self):
+        pass
+    def link_left(self):
+        pass
+    def link_right(self):
+        pass
+    
+    #properties--> block locations
+    def dblock(self):
+        pass
+    
+    def ublock(self):
+        pass
+    def lblock(self):
+        pass
+    def rblock(self):
+        pass
+        
+    #action stuff
+    def action(self,robot):
+        pass
+        
+    def drag(self):
+        '''cleans up object for a 'drop' '''
+        pass
+    def drop(self,pos):
+        '''find any problems with the drop and cancle it if needed...'''
+        pass
+    def save(self):
+        '''return a string which will allow recreation of this block (type,lable,num,pos,binding)'''
+        pass
+    def load(self,s):
+        '''places block and recreates block based on "s" '''
+        pass
 def test():
     pmap = map.MAP(r_c=(160,121),
                    sub_rect=pygame.Rect((0,0),(50,50)),

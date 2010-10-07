@@ -41,7 +41,7 @@ def set_directory(datadir='data'):
 @lib.decorators.memoized
 def load_img(name):
     """ Load image and return image object"""
-    fullname = os.path.join(curdir,'data',name)
+    fullname = os.path.join(curdir,'data','img',name)
     try:
         image = pygame.image.load(fullname)
         #convert the img to have transparencies...

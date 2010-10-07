@@ -4,7 +4,6 @@ import lib.common
 import lib
 
 from tiles import tile
-from lib.decorators import propget, propset, propdel
 
 
 class MAP(object):
@@ -13,7 +12,7 @@ class MAP(object):
     that i might want to use it for some random tile data...
     
     possibly creature/objects on said tile?'''
-    def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475))):
+    def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
         if lib.common.debug > 0:
             self.font = pygame.font.Font(None, 18)
         self.map_size=r_c
@@ -27,8 +26,8 @@ class MAP(object):
                 tmp=pygame.Rect(self.sub_rect.topleft,self.sub_rect.size)
                 tmp.topleft=((self.sub_rect.width*x)+self.main_rect.left,(self.sub_rect.height*y)+self.main_rect.top)
                 color = (255,255,0)
-                #print color
-                self.map[(x,y)]=[tile(),tmp,color]
+                #set map items::: tile class, rect, and grid color
+                self.map[(x,y)]=[tclass(),tmp,color]
         self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
         
         self.loc=(0,0)
@@ -95,14 +94,14 @@ class MAP(object):
                     except KeyError:
                         pass
         return (-1,-1)
-    @propget
+    
+    @lib.decorators.propget
     def loc(self):
         '''this is perhaps one of my favorite little python hidden secrets:
-            object attribute decorators... whenever i "get" the variable
-            "self.loc" this function runs'''
+        object attribute decorators... whenever i "get" the variable
+        "self.loc" this function runs'''
         return self._loc
-
-    @propset
+    @lib.decorators.propset
     def loc(self, value):
         '''but, when i "set" self.loc, this function runs! even more, this 
         way, when i move the map, (changing the top left number self.loc)

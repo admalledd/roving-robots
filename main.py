@@ -24,7 +24,7 @@ def main():
     load_map.load_map('test_map')
     
     v=vehicle.rcx()
-    curview='map'
+    
     while True:
         pygame.time.wait(10)
         

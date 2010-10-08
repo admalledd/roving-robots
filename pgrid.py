@@ -1,7 +1,12 @@
+import os
+
+import pygame
+from pygame.locals import *
 
 import map
 import tiles
-
+import input
+import lib
 
 class button(object):
     def __init__(self,type=None):
@@ -46,14 +51,39 @@ class button(object):
         self._walkable=value
 
 class block(object):
-    def __init__(self,img,lable,num=None):
+    #non interface stuff
+    def __init__(self,img,lable=None,num=None):
         '''example init:::
-        block(os.path.join(~~~~~),pygame.font.render(~~~~~),1)'''
-        self.img = lib.common.load_img(img)
+        block(os.path.join(~~~~~),pygame.font.render(~~~~~),1)
+        
+        we draw img's onto fake smaller surface so that we can use IT for an absilute topleft'''
+        if type(img) == str:
+            self.img = lib.common.load_img(img)
+        else:
+            self.img=img
         self.lable = lable
+        self.lable_pos = 7,11
+        self.surf = pygame.Surface((80,80))
         if num is not None:
-            self.num = num
-        pass
+            if isinstance(num,input.Input):
+                self.tbox = num
+            else:
+                self.tbox = input.Input(y=y,maxlength=3, color=(255,0,0), prompt=' ', restricted='0123456789')
+        else:
+            #used to let us know NOT to try and render this section
+            self.tbox = None
+            
+    def draw(self,screen,rect):
+        if self.lable:
+            self.surf.blit(self.lable,self.lable_pos)
+        if self.tbox:
+            self.tbox.draw(self.surf)
+        self.surf.blit(self.img,(0,0))
+        screen.blit(self.surf,rect)
+    def process_events(self,events):
+        for event in events:
+            if event.type == MOUSEBUTTONDOWN:
+                print 'happy days!'
     def link_up(self):
         pass
     def link_down(self):
@@ -90,34 +120,60 @@ class block(object):
     def load(self,s):
         '''places block and recreates block based on "s" '''
         pass
-def test():
+        
+class blank_block(block):
+    def __init__(self):
+        block.__init__(self,os.path.join('gui','programmer','blankblock_blnk.png'))
+        
+        
+        
+class interface(object):
+    def __init__(self,robot):
+        self.ro = robot
+        if self.ro.code:
+            self.code = self.ro.code
+        else:
+            self.code = code(self.ro)
+    def click_engine(self,pos):
+        pass
+    @lib.decorators.disabled
+    def draw(self, screen):
+        screen.blit(self.surf, self.rect)
+        
+def create_programming_gui(screen):
+    back_ground = screen.copy()
     pmap = map.MAP(r_c=(160,121),
-                   sub_rect=pygame.Rect((0,0),(50,50)),
-                   main_rect=pygame.Rect((0,0),(475,475)),
-                   tclass=tile)
+                   sub_rect=pygame.Rect((0,0),(80,80)),
+                   main_rect=pygame.Rect((100,50),(600,500)),
+                   tclass=blank_block)
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    while True:
+        pygame.time.wait(10)
+        
+        screen.fill((0, 0, 0))
+        events = pygame.event.get()
+        for event in events:
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                return None
+            elif event.type == MOUSEBUTTONDOWN and event.button==1:
+                pass
+                #input.mouse.click_engine(event.pos)
+        screen.blit(back_ground,(0,0))
+        pmap.draw(screen)
+        
+        
+        pygame.display.flip()
 
 
 
 
 if __name__ == '__main__':
-    test()
+    pygame.init()
+    lib.common.set_directory()
+    lib.common.debug = 2
+    screen = pygame.display.set_mode((800, 600))
+    #load map tiles...
+    tiles.find_tiles()
+    
+    create_programming_gui(screen)

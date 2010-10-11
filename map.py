@@ -66,14 +66,16 @@ class MAP(object):
             screen.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
             screen.blit(self.font.render(str(self.loc)
                         ,True,(0,0,255)).convert_alpha(),(0,12))
-        
-        #draw rect around main map area... disabled until i need it for the multi interface...
-        #pygame.draw.rect(screen, (0,255,255), self.main_rect, 1)
+        if lib.common.debug > 1:
+            #draw rect around main map area... disabled until i need it for the multi interface...
+            pygame.draw.rect(screen, (0,255,255), self.main_rect, 1)
         
     def draw(self,screen):
         '''fast draw function.
         i use a surface buffer for the "real" draw function
-        and re-blit it here.'''
+        and re-blit it here.
+        
+        TODO:: known bug: if main_rect.topleft != (0,0) the position of the blocks falls apart'''
         screen.blit(self.surf,self.main_rect)
     
     def click_engine(self,pos):

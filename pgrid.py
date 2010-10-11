@@ -8,48 +8,6 @@ import tiles
 import input
 import lib
 
-class button(object):
-    def __init__(self,type=None):
-        if type==None:
-            #get a random tile from the cache
-            #to be depreciated...
-            self.set_tile()
-        self.walkable=False
-        
-        self.item = None
-    def set_tile(self,type=None):
-        if type is not None and len(type) < 4:
-            raise Exception('tile type MUST be a four-charichtar length string!')
-        self.type=type
-        if type=='rand':
-            #get a random tile from the cache
-            self.surf=tile_cache.get(tile_cache.cache.keys()[int(random.random()*len(tile_cache.cache.keys()))])
-        else:
-            try:
-                self.surf = tile_cache.get(type)
-            except:
-                self.surf = tile_cache.get('uuuu')
-        if type == None:
-            self.walkable = False
-        elif type in  walkable:
-            self.walkable = True
-        else:
-            self.walkable = False
-            
-    def draw(self,screen,rect):
-        screen.blit(self.surf,rect)
-        if self.item:
-            self.item.draw(screen,rect)
-    @lib.decorators.propget
-    def walkable(self):
-        if self.item:
-            return False
-        else:
-            return self._walkable
-    @lib.decorators.propset
-    def walkable(self, value):
-        self._walkable=value
-
 class block(object):
     #non interface stuff
     def __init__(self,img,lable=None,num=None):
@@ -94,19 +52,33 @@ class block(object):
         pass
     
     #properties--> block locations
+    @lib.decorators.propget
     def dblock(self):
         pass
-    
+    @lib.decorators.propget
     def ublock(self):
         pass
+    @lib.decorators.propget
     def lblock(self):
         pass
+    @lib.decorators.propget
     def rblock(self):
         pass
-        
+    @lib.decorators.propget
+    def loc(self):
+        return self.__loc
+    @lib.decorators.propset
+    def loc(self,value):
+        self.__loc = value
+    
     #action stuff
     def action(self,robot):
+        '''robotic action to take (turn, go fwd, scan/make desision)'''
         pass
+    def next(self,robot):
+        '''what is the next block? (give (x,y))'''
+        pass
+    
         
     def drag(self):
         '''cleans up object for a 'drop' '''
@@ -121,11 +93,19 @@ class block(object):
         '''places block and recreates block based on "s" '''
         pass
         
-class blank_block(block):
+class bgnd_block(block):
     def __init__(self):
-        block.__init__(self,os.path.join('gui','programmer','blankblock_blnk.png'))
+        block.__init__(self,os.path.join('gui','programmer','background_bgnd.png'))
         
+class main_block(block):
+    def __init__(self):
+        block.__init__(self,os.path.join('gui','programmer','main_main.png'))
         
+    def action(self,robot):
+        '''do nothing, pass along. this is not the robot you are looking for'''
+        pass
+    
+    def next(self,robot):
         
 class interface(object):
     def __init__(self,robot):
@@ -142,11 +122,11 @@ class interface(object):
         
 def create_programming_gui(screen):
     back_ground = screen.copy()
-    pmap = map.MAP(r_c=(160,121),
+    pmap = map.MAP(r_c=(15,15),
                    sub_rect=pygame.Rect((0,0),(80,80)),
-                   main_rect=pygame.Rect((100,50),(600,500)),
-                   tclass=blank_block)
-    
+                   main_rect=pygame.Rect((0,0),(600,500)),
+                   tclass=bgnd_block)
+    pmap.show_grid = True
     while True:
         pygame.time.wait(10)
         
@@ -156,9 +136,19 @@ def create_programming_gui(screen):
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 return None
+            if event.type == KEYDOWN:
+                if event.key == K_LEFT:
+                    pmap.loc =pmap.loc[0]+1, pmap.loc[1]
+                elif event.key == K_RIGHT:
+                    pmap.loc =pmap.loc[0]-1, pmap.loc[1]
+                elif event.key == K_UP:
+                    pmap.loc =pmap.loc[0], pmap.loc[1]+1
+                elif event.key == K_DOWN:
+                    pmap.loc =pmap.loc[0], pmap.loc[1]-1
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
-                pass
-                #input.mouse.click_engine(event.pos)
+                print event.pos
+                pmap.click_engine(event.pos)
+                
         screen.blit(back_ground,(0,0))
         pmap.draw(screen)
         

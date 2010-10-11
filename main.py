@@ -37,6 +37,7 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
                 pass
                 #input.mouse.click_engine(event.pos)
+                print map.map.click_engine(event.pos)
                 
         map.map.draw(screen)
         v.events(events)

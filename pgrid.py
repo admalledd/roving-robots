@@ -96,7 +96,10 @@ class block(object):
 class bgnd_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','background_bgnd.png'))
-        
+
+class pfwd_block(block):
+    def next(self,robot):
+        return seld.dblock
 class main_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','main_main.png'))
@@ -106,27 +109,35 @@ class main_block(block):
         pass
     
     def next(self,robot):
+        return self.dblock
         
 class interface(object):
-    def __init__(self,robot):
-        self.ro = robot
-        if self.ro.code:
-            self.code = self.ro.code
-        else:
-            self.code = code(self.ro)
+    def __init__(self):
+        self.fwd_spawn = (lib.common.load_img(os.path.join('gui','programmer','forward_pfwd.png')),
+                          pygame.Rect((650,25),(80,80)) )
+        
+        self.spawns = {'pfwd':(self.fwd_spawn,pfwd_block)}
+        
     def click_engine(self,pos):
-        pass
-    @lib.decorators.disabled
+        for key,value in self.spawns.items():
+            print key
+            if value[0][1].collidepoint(pos):
+                print 'hit spawn'
+                return value[1](value[0][0])
+    
     def draw(self, screen):
-        screen.blit(self.surf, self.rect)
+        #screen.blit(self.surf, self.rect)
+        for key,value in self.spawns.items():
+            screen.blit(value[0][0],value[0][1])
         
 def create_programming_gui(screen):
     back_ground = screen.copy()
     pmap = map.MAP(r_c=(15,15),
                    sub_rect=pygame.Rect((0,0),(80,80)),
-                   main_rect=pygame.Rect((0,0),(600,500)),
+                   main_rect=pygame.Rect((0,0),(640,600)),
                    tclass=bgnd_block)
     pmap.show_grid = True
+    intr = interface()
     while True:
         pygame.time.wait(10)
         
@@ -148,7 +159,12 @@ def create_programming_gui(screen):
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
                 print event.pos
                 pmap.click_engine(event.pos)
+                ret = intr.click_engine(event.pos)
+                if ret:
+                    pmap.map[(0,0)][0] = ret
+                    pmap.render()
                 
+        intr.draw(screen)
         screen.blit(back_ground,(0,0))
         pmap.draw(screen)
         

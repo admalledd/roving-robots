@@ -31,9 +31,9 @@ class MAP(object):
         self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
         
         self.loc=(0,0)
-    def render(self,screen):
+    def render(self):
         '''iterate through every tile and move it and draw the contents'''
-        screen.fill((0,0,0))
+        self.surf.fill((0,0,0))
         for x in range(self.main_rect.width/self.sub_rect.width):
             for y in range(self.main_rect.height/self.sub_rect.height):
                 try:
@@ -46,16 +46,16 @@ class MAP(object):
                                    (self.main_rect.top  +(y*self.sub_rect.height )))
                     if self.main_rect.contains(tmp_r):
                         #if the rect fits, draw it, else dont
-                        self.map[(xx,yy)][0].draw(screen,tmp_r)
-                        #screen.blit(self.map[(xx,yy)][0].surf,tmp_r)#render tile to map screen...
+                        self.map[(xx,yy)][0].draw(self.surf,tmp_r)
+                        #self.surf.blit(self.map[(xx,yy)][0].surf,tmp_r)#render tile to map self.surf...
                         
                         ##enable to draw rect outlines
                         if self.show_grid:
-                            pygame.draw.rect(screen, self.map[(xx,yy)][2], tmp_r, 1)
+                            pygame.draw.rect(self.surf, self.map[(xx,yy)][2], tmp_r, 1)
                         if lib.common.debug > 0:
                             #render tile number text...
                             text = self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha()
-                            screen.blit(text,tmp_r)
+                            self.surf.blit(text,tmp_r)
                 except KeyError:
                     pass#key that doesnt exist? how and why?
                     #keys that go out of the map is what happens when we have a blank tile in the viewport...
@@ -63,12 +63,12 @@ class MAP(object):
                         print x,y
                         print xx,yy
         if lib.common.debug > 0:
-            screen.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
-            screen.blit(self.font.render(str(self.loc)
+            self.surf.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
+            self.surf.blit(self.font.render(str(self.loc)
                         ,True,(0,0,255)).convert_alpha(),(0,12))
         if lib.common.debug > 1:
             #draw rect around main map area... disabled until i need it for the multi interface...
-            pygame.draw.rect(screen, (0,255,255), self.main_rect, 1)
+            pygame.draw.rect(self.surf, (0,255,255), self.main_rect, 1)
         
     def draw(self,screen):
         '''fast draw function.
@@ -111,4 +111,4 @@ class MAP(object):
         
         now, if only there was a way to get pydev to understand this...'''
         self._loc=value
-        self.render(self.surf)
+        self.render()

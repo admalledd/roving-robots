@@ -176,7 +176,7 @@ class rcx(object):
                 self.front_sq()[0].item = None
                 self.play_sound('pick_up_item')
                 self.play_ani('pick_up:%s'%self.direction)
-                map.map.render(map.map.surf)
+                map.map.render()
             else:
                 self.play_sound('err')
                 self.play_ani('pick_up_err:%s'%self.direction)
@@ -192,7 +192,7 @@ class rcx(object):
                 self.arm = None
                 self.play_sound('put_down_item')
                 self.play_ani('put_down:%s'%self.direction)
-                map.map.render(map.map.surf)
+                map.map.render()
             else:
                 self.play_sound('err')
                 self.play_ani('put_down_err:%s'%self.direction)

@@ -30,7 +30,9 @@ class block(object):
         else:
             #used to let us know NOT to try and render this section
             self.tbox = None
-            
+        self.blank = False
+        
+        
     def draw(self,screen,rect):
         if self.lable:
             self.surf.blit(self.lable,self.lable_pos)
@@ -38,10 +40,12 @@ class block(object):
             self.tbox.draw(self.surf)
         self.surf.blit(self.img,(0,0))
         screen.blit(self.surf,rect)
-    def process_events(self,events):
+    def event_engine(self,events):
         for event in events:
             if event.type == MOUSEBUTTONDOWN:
                 print 'happy days!'
+                
+        self
     def link_up(self):
         pass
     def link_down(self):
@@ -52,9 +56,15 @@ class block(object):
         pass
     
     #properties--> block locations
+    #block locations are thusly defined: tuple of (x,y) position of next block.
     @lib.decorators.propget
     def dblock(self):
-        pass
+        return self._dblock
+    @lib.decorators.propset
+    def dblock(self,value):
+        if self.__loc[1] >= value:
+            print 'warning, you made a mistake idiot!! fix it! <<dblock.propset>>'
+        self._dblock = value
     @lib.decorators.propget
     def ublock(self):
         pass
@@ -96,10 +106,12 @@ class block(object):
 class bgnd_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','background_bgnd.png'))
-
+        self.blank = True
+        
 class pfwd_block(block):
     def next(self,robot):
         return seld.dblock
+        
 class main_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','main_main.png'))
@@ -118,13 +130,26 @@ class interface(object):
         
         self.spawns = {'pfwd':(self.fwd_spawn,pfwd_block)}
         
+        self.main_block = main_block()
+        
+        
     def click_engine(self,pos):
+        '''this is for the spawning and other thing within the interface
+        it has nothing to do with the event engine of the pmap system...'''
         for key,value in self.spawns.items():
-            print key
             if value[0][1].collidepoint(pos):
                 print 'hit spawn'
                 return value[1](value[0][0])
-    
+    def event_engine(self,events,pmap):
+        '''the job of this function is to follow the path of the main_block, and pass the events down the line
+        also utlizes the map.MAP system to find next block to run (yay me!)'''
+        for event in events:
+            pass
+            
+        next = self.main_block.event_engine(events)
+        while next is not None:
+            #is it OK for the event chain to be broken when a block starts to get dragged?
+            next = pmap.map[next][0].event_engine(events)
     def draw(self, screen):
         #screen.blit(self.surf, self.rect)
         for key,value in self.spawns.items():
@@ -142,6 +167,9 @@ def create_programming_gui(screen):
         pygame.time.wait(10)
         
         screen.fill((0, 0, 0))
+        #draw background (img of robots/terrain)
+        screen.blit(back_ground,(0,0))
+        
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -163,9 +191,9 @@ def create_programming_gui(screen):
                 if ret:
                     pmap.map[(0,0)][0] = ret
                     pmap.render()
-                
+        intr.event_engine(events,pmap)
+        
         intr.draw(screen)
-        screen.blit(back_ground,(0,0))
         pmap.draw(screen)
         
         

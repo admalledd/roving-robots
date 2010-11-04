@@ -137,6 +137,7 @@ def create_programming_gui(screen):
                    main_rect=pygame.Rect((0,0),(640,600)),
                    tclass=bgnd_block)
     pmap.show_grid = True
+    pmap.render()
     intr = interface()
     while True:
         pygame.time.wait(10)

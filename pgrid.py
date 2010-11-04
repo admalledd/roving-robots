@@ -1,4 +1,5 @@
 import os
+import logging
 
 import pygame
 from pygame.locals import *
@@ -99,7 +100,7 @@ class bgnd_block(block):
 
 class pfwd_block(block):
     def next(self,robot):
-        return seld.dblock
+        return self.dblock
 class main_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','main_main.png'))

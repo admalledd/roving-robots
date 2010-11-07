@@ -1,10 +1,13 @@
+version 0.0.7:
+    switched to using the logging module for data stuff.
+    ps: i REALLY suck at this whole GUI thing... maybe i can get some help?
 
 version 0.0.6:
     command test code hardcoded in (press enter to run each code block)
     
     item subsystem updated
     
-    found a graphics artist willing to help (thanks Evan!) new tiles, and such shall apear soon
+    found a graphics artist willing to help (thanks Evan!) new tiles, and such shall appear soon
     working with a friend about the sounds (engine, and other background sounds)
     
     added project to GitHub.com

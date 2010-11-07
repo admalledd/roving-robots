@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('map')
+
 import pygame
 from pygame.locals import *
 import lib.common 
@@ -89,8 +92,7 @@ class MAP(object):
                         xx=self.loc[0]+x
                         yy=self.loc[1]+y
                         if self.map[(xx,yy)][1].collidepoint(pos):
-                            if lib.common.debug > 1:
-                                print "%s,%s clicked"%(xx,yy)
+                            logging.debug("%s,%s clicked"%(xx,yy))
                             return (xx,yy)
                             
                     except KeyError:

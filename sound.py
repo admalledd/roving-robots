@@ -10,8 +10,6 @@ if __name__ == '__main__':
     
     pygame.mixer.init()
     
-    lib.common.set_directory()
-    
     #screen = pygame.display.set_mode((800, 600))
     
     pre  = pygame.mixer.Sound(os.path.join(lib.common.curdir,'data', 'sounds', 'bg', 'electric_engine_start.ogg'))

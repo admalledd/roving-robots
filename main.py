@@ -1,8 +1,10 @@
 '''an attempt (however poorly) to recreate the game known as stormrunner from lego
 into a python game.'''
+import sys
+import logging
+logger = logging.getLogger('main')
 import pygame
 from pygame.locals import *
-import sys
 
 import map
 import lib.common
@@ -14,9 +16,7 @@ import load_map
 import vehicle
 
 def main():
-    #init stuff....
     pygame.init()
-    lib.common.set_directory()
     screen = pygame.display.set_mode((800, 600))
     #load map tiles...
     tiles.find_tiles()
@@ -37,7 +37,7 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
                 pass
                 #input.mouse.click_engine(event.pos)
-                print map.map.click_engine(event.pos)
+                logger.info(map.map.click_engine(event.pos))
                 
         map.map.draw(screen)
         v.events(events)
@@ -51,5 +51,5 @@ if __name__ == '__main__':
 		##randy:: ill work on that!
         if sys.argv[1].startswith('-v'):
             lib.common.debug=len(sys.argv[1][1:])
-    if lib.common.debug>0:print 'debug level is:%s'%lib.common.debug
+    if lib.common.debug>0:logger.info('debug level is:%s'%lib.common.debug)
     main()

@@ -165,9 +165,9 @@ def create_programming_gui(screen):
                 if ret:
                     pmap.map[(0,0)][0] = ret
                     pmap.render()
-                
-        intr.draw(screen)
+        #blit background FIRST! (it my just so happen to cover up your other stuff...)
         screen.blit(back_ground,(0,0))
+        intr.draw(screen)
         pmap.draw(screen)
         
         

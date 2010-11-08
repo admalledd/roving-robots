@@ -6,7 +6,8 @@ xaxx == bottom right
 xxax == bottom left
 xxxa == top left'''
 import os
-
+import logging
+logger=logging.getLogger('load_map')
 import pygame
 
 import tiles
@@ -22,7 +23,7 @@ def load_map(map_name):
     
     
     map_size=len(data[0]),len(data)-1
-    print "map size:(%s , %s)"%(len(data),len(data[0]))
+    logger.info("map size:(%s , %s)"%(len(data),len(data[0])))
     
     #get a random tiles size...
     sub_rect= tiles.tile().surf.get_rect()

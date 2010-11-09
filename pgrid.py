@@ -61,16 +61,15 @@ class block(object):
 
     
     ##link block decorators:::
-    ##if "set", tey set themselves to other, and also set othe.xblock to self(or none if unlinking)
+    ##if "set", tey set themselves to other, and also set other.xblock to self(or none if unlinking)
     @lib.decorators.propget
     def dblock(self):
         return self._dblock
     @lib.decorators.propset
     def dblock(self,other):
-        #x=down
-        #y=up
         if other is None:
             #set the other block's corrisponing to None as well...
+            #use name in self because other is None right now...
             self._dblock._ublock = None
         else:
             other._ublock = self
@@ -81,8 +80,6 @@ class block(object):
         return self._ublock
     @lib.decorators.propset
     def ublock(self,other):
-        #x=down
-        #y=up
         if other is None:
             #set the other block's corrisponing to None as well...
             self._ublock._dblock = None
@@ -95,8 +92,6 @@ class block(object):
         return self._lblock
     @lib.decorators.propset
     def lblock(self,other):
-        #x=down
-        #y=up
         if other is None:
             #set the other block's corrisponing to None as well...
             self._lblock._rblock = None
@@ -109,8 +104,6 @@ class block(object):
         return self._rblock
     @lib.decorators.propset
     def rblock(self,other):
-        #x=down
-        #y=up
         if other is None:
             #set the other block's corrisponing to None as well...
             self._rblock._lblock = None
@@ -192,14 +185,21 @@ class pfwd_block(block):
         return True
         
     def drop(self,pos,pmap):
-        pmap.map[pos][0]=self
-        up=pos[0],pos[1]-1
-        pmap.map[up][0].dblock = self
+        if self.able_drop(pos,pmap):
+            pmap.map[pos][0]=self
+            up=pos[0],pos[1]-1
+            pmap.map[up][0].dblock = self
         
-        down=pos[0],pos[1]+1
-        pmap.map[down][0].ublock = self
-        
-        
+            down=pos[0],pos[1]+1
+            pmap.map[down][0].ublock = self
+        else:
+            raise Error('must be able to place block before drop')
+        self.loc=pos
+    def drag(self,pmap):
+        self.dblock = None
+        self.ublock = None
+        pmap.map[pos] = bgnd_block()
+        return self
 class main_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','main_main.png'))

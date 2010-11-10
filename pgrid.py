@@ -47,6 +47,9 @@ class block(object):
         self._rblock=None
         self._lblock=None
         
+        #can this block be dragged? (override in sub classes!)
+        self.draggable = False
+        
     def draw(self,screen,rect):
         if self.lable:
             self.surf.blit(self.lable,self.lable_pos)
@@ -70,7 +73,10 @@ class block(object):
         if other is None:
             #set the other block's corrisponing to None as well...
             #use name in self because other is None right now...
-            self._dblock._ublock = None
+            try:
+                self._dblock._ublock = None
+            except AttributeError as e:
+                pass
         else:
             other._ublock = self
         self._dblock = other
@@ -82,7 +88,10 @@ class block(object):
     def ublock(self,other):
         if other is None:
             #set the other block's corrisponing to None as well...
-            self._ublock._dblock = None
+            try:
+                self._ublock._dblock = None
+            except AttributeError as e:
+                pass
         else:
             other._dblock = self
         self._ublock = other
@@ -94,7 +103,10 @@ class block(object):
     def lblock(self,other):
         if other is None:
             #set the other block's corrisponing to None as well...
-            self._lblock._rblock = None
+            try:
+                self._lblock._rblock = None
+            except AttributeError as e:
+                pass
         else:
             other._rblock = self
         self._lblock = other
@@ -106,7 +118,10 @@ class block(object):
     def rblock(self,other):
         if other is None:
             #set the other block's corrisponing to None as well...
-            self._rblock._lblock = None
+            try:
+                self._rblock._lblock = None
+            except AttributeError as e:
+                pass
         else:
             other._lblock = self
         self._rblock = other
@@ -129,9 +144,15 @@ class block(object):
         pass
     
         
-    def drag(self):
+    def drag(self,pmap):
         '''cleans up object for a 'drop' '''
-        pass
+        self.dblock = None
+        self.ublock = None
+        self.lblock = None
+        self.rblock = None
+        pmap.map[self.loc][0] = bgnd_block()
+        return self
+        
     def able_drop(self,pos,pmap):
         '''find any problems with the drop and return False if obstructed.
         else return True'''
@@ -151,15 +172,18 @@ class bgnd_block(block):
         block.__init__(self,os.path.join('gui','programmer','background_bgnd.png'))
         self.link_down  = False
         self.link_up    = True
+        self.blank = True
         
 class pfwd_block(block):
     def __init__(self,img,lable=None,num=None):
         block.__init__(self,img,lable,num)
         self.link_up   = True
         self.link_down = True
-    
+        self.draggable = True
+        
+        
     def next(self,robot):
-        if self.dblock and (isinstance(self.dblock,bgnd_block)==False):
+        if self.dblock:
             return self.dblock
         else:
             return False
@@ -168,10 +192,10 @@ class pfwd_block(block):
         #firstly: check for up block
         up=pos[0],pos[1]-1
         if up[1] < 0:
-            print '#we are at the top, cant place block here!'
+            logger.debug('we are at the top, cant place block here!')
             return False
         if not pmap.map[up][0].link_down:
-            print '#link_down is false, cant place block there!'
+            logger.debug('block above cant be linked downwards, cant place block there!')
             return False
             
         #secondly: check for down block:
@@ -180,7 +204,7 @@ class pfwd_block(block):
         #but lets check IF there even IS a block there...
         if pmap.map.has_key(down):
             if not pmap.map[down][0].link_up:
-                print '#block below doesnt allow linking'
+                logger.debug('block below doesnt allow linking')
                 return False
         return True
         
@@ -195,11 +219,8 @@ class pfwd_block(block):
         else:
             raise Error('must be able to place block before drop')
         self.loc=pos
-    def drag(self,pmap):
-        self.dblock = None
-        self.ublock = None
-        pmap.map[pos] = bgnd_block()
-        return self
+        
+        
 class main_block(block):
     def __init__(self):
         block.__init__(self,os.path.join('gui','programmer','main_main.png'))
@@ -229,7 +250,7 @@ class interface(object):
         it has nothing to do with the event engine of the pmap system...'''
         for key,value in self.spawns.items():
             if value[0][1].collidepoint(pos):
-                print 'hit spawn'
+                logger.debug('hit spawn')
                 return value[1](value[0][0])
     def event_engine(self,events,pmap):
         '''the job of this function is to follow the path of the main_block, and pass the events down the line
@@ -245,12 +266,17 @@ class interface(object):
         #screen.blit(self.surf, self.rect)
         for key,value in self.spawns.items():
             screen.blit(value[0][0],value[0][1])
+            
 def get_code(pmap):
     cur = pmap.map[(0,0)][0]
     while cur:
         print cur
         ##todo:: pass robot instance
         cur = cur.next(None)
+        if isinstance(cur,bgnd_block):
+            #looks like we have a bgblock, exit loop
+            cur = False
+            
 def create_programming_gui(screen):
     back_ground = screen.copy()
     pmap = map.MAP(r_c=(15,15),
@@ -304,10 +330,20 @@ def create_programming_gui(screen):
                         
                         input.mouse.cur_sel = None
                     pmap.render()
-                #try to make a button, remove whatever is __in__ the mouse right now
-                ret = intr.click_engine(event.pos)
-                if ret:
-                    input.mouse.cur_sel = ret
+                ##TODO::: use the blocks own event_engine to do dragging? (click only in block.drag_rect?)
+                
+                elif input.mouse.cur_sel is None and (map_pos != (-1,-1)) and pmap.map[map_pos][0].draggable:
+                    #we have no mouse item, map pos is good, and button CAN be dragged...
+                    input.mouse.cur_sel = pmap.map[map_pos][0].drag(pmap)
+                    pmap.render()
+                
+                elif map_pos == (-1,-1):
+                    #we are off the map, lets check if the interface needs anything...
+                    
+                    #try to make a button, remove whatever is __in__ the mouse right now
+                    ret = intr.click_engine(event.pos)
+                    if ret:
+                        input.mouse.cur_sel = ret
         
         if input.mouse.cur_sel:
             input.mouse.cur_sel.draw(screen,input.mouse.cur_pos())
@@ -320,7 +356,7 @@ def create_programming_gui(screen):
 
 if __name__ == '__main__':
     pygame.init()
-    lib.common.debug = 2
+    lib.common.debug(2)
     screen = pygame.display.set_mode((800, 600))
     #load map tiles...
     tiles.find_tiles()

@@ -77,7 +77,7 @@ class Tile_Cache(object):
                     else:
                         self.cache[imgname]= lib.common.load_img(os.path.join(dir,f))
                         
-        if lib.common.debug >2:
+        if lib.common.debug() >2:
             import pprint
             f_ = open('random tile name file.txt','w')
             pprint.pprint(self.cache,f_)

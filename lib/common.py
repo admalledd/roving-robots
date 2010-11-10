@@ -17,7 +17,21 @@ import pygame
 
 import lib.decorators
 
-debug=0
+_debug = 0
+def debug(value=None):
+    global _debug
+    if value is None:
+        return _debug
+    _debug = value
+    if value>1:
+        root = logging.getLogger('')
+        root.handlers[1].setLevel(logging.DEBUG)
+    else:
+        root = logging.getLogger('')
+        root.handlers[1].setLevel(logging.info)
+        
+        
+        
 datadir = 'data'
 print "current path    ::",  os.getcwd()
 #check if current directory has a folder with the same name as the datadir variable...
@@ -40,6 +54,9 @@ else:
         print 'ERROR!! could not find main directory!'
         raise SystemExit
     print 'changing tmp_path to::' , curdir
+
+
+
 
 log_name=os.path.join(curdir,'roving-robots.log')
 # set up logging to file - see previous section for more details

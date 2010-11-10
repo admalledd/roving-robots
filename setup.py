@@ -3,7 +3,6 @@ import py2exe
 #from glob import glob
 import lib.common
 
-lib.common.set_directory()
 #data_files=[(glob(lib.common.curdir+'\\data\\*.*'))]
 setup(
         #data_files=data_files,

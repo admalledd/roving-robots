@@ -79,7 +79,7 @@ class Tile_Cache(object):
                         
         if lib.common.debug() >2:
             import pprint
-            f_ = open('random tile name file.txt','w')
+            f_ = open('random-tile-name-file.txt','w')
             pprint.pprint(self.cache,f_)
             f_.close()
         self.cache['uuuu']=pygame.Surface((50, 50))

@@ -16,7 +16,7 @@ class MAP(object):
     
     possibly creature/objects on said tile?'''
     def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
-        if lib.common.debug > 0:
+        if lib.common.debug() > 0:
             self.font = pygame.font.Font(None, 18)
         self.map_size=r_c
         self.sub_rect=sub_rect
@@ -55,21 +55,21 @@ class MAP(object):
                         ##enable to draw rect outlines
                         if self.show_grid:
                             pygame.draw.rect(self.surf, self.map[(xx,yy)][2], tmp_r, 1)
-                        if lib.common.debug > 0:
+                        if lib.common.debug() > 0:
                             #render tile number text...
                             text = self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha()
                             self.surf.blit(text,tmp_r)
                 except KeyError:
                     pass#key that doesnt exist? how and why?
                     #keys that go out of the map is what happens when we have a blank tile in the viewport...
-                    if lib.common.debug >2:
-                        print x,y
-                        print xx,yy
-        if lib.common.debug > 0:
+                    if lib.common.debug() >2:
+                        logger.debug('map location temp:%s,%s'%(x,y))
+                        logger.debug('missing tile     :%s,%s'%(xx,yy))
+        if lib.common.debug() > 0:
             self.surf.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
             self.surf.blit(self.font.render(str(self.loc)
                         ,True,(0,0,255)).convert_alpha(),(0,12))
-        if lib.common.debug > 1:
+        if lib.common.debug() > 1:
             #draw rect around main map area... disabled until i need it for the multi interface...
             pygame.draw.rect(self.surf, (0,255,255), self.main_rect, 1)
         
@@ -92,7 +92,7 @@ class MAP(object):
                         xx=self.loc[0]+x
                         yy=self.loc[1]+y
                         if self.map[(xx,yy)][1].collidepoint(pos):
-                            logging.debug("%s,%s clicked"%(xx,yy))
+                            logger.debug("%s,%s clicked"%(xx,yy))
                             return (xx,yy)
                             
                     except KeyError:

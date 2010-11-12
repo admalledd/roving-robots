@@ -9,7 +9,7 @@ setup(
         console=['main.py'],
         options={
                 "py2exe":{
-                        'bundle_files': 2,
+                        'bundle_files': 3,
                         "optimize": 0,
                         'excludes':["Tkconstants","Tkinter","tcl",'email','ssl','xml','numpy','_ssl'],
                         'dll_excludes':['w9xpopen.exe'],

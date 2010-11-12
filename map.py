@@ -17,7 +17,8 @@ class MAP(object):
     possibly creature/objects on said tile?'''
     def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
         if lib.common.debug() > 0:
-            self.font = pygame.font.Font(None, 18)
+            import os
+            self.font = pygame.font.Font(os.path.join(lib.common.curdir,'data','freesansbold.ttf'), 12)
         self.map_size=r_c
         self.sub_rect=sub_rect
         self.main_rect=main_rect

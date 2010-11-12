@@ -14,6 +14,7 @@ import tiles
 import input
 import load_map
 import vehicle
+import programmer
 
 def main():
     pygame.init()
@@ -28,7 +29,7 @@ def main():
     while True:
         pygame.time.wait(10)
         
-        screen.fill((0, 0, 0))
+        
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -38,7 +39,9 @@ def main():
                 pass
                 #input.mouse.click_engine(event.pos)
                 logger.info(map.map.click_engine(event.pos))
-                
+            elif event.type == KEYDOWN and event.key == K_p:
+                programmer.create_programming_gui(screen)
+        screen.fill((0, 0, 0))
         map.map.draw(screen)
         v.events(events)
         v.draw(screen)

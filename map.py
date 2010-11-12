@@ -32,7 +32,7 @@ class MAP(object):
                 color = (255,255,0)
                 #set map items::: tile class, rect, and grid color
                 self.map[(x,y)]=[tclass(),tmp,color]
-        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
+        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height),pygame.SRCALPHA)
         
         self.loc=(0,0)
     def render(self):
@@ -115,3 +115,10 @@ class MAP(object):
         now, if only there was a way to get pydev to understand this...'''
         self._loc=value
         self.render()
+    def tile_gen(self):
+        '''a generator using <yeild> to help with iterating over _every_ tile'''
+        for x in range(self.map_size[0]-1):
+            for y in range(self.map_size[1]-1):
+                yield self.map[(x,y)],(x,y)
+
+

@@ -30,8 +30,7 @@ class rcx(object):
         
         self.ani_step = 0
         
-        #most of this is just sample code, later the code interface will take care of this...
-        self.code = programmer.code(self,['tl','move_fwd','tl','pick_up','tr','move_fwd','tr','move_fwd','move_fwd','tl','move_fwd','move_fwd','move_fwd','move_fwd','put_down','tr','move_fwd','end'])
+        ##removed code sample, merging pgrid.py into programmer.py
         
     def draw(self,screen):
         self.rect.center = map.map.map[self.loc][1].center
@@ -235,4 +234,6 @@ class rcx(object):
         pass
         
     def run_cmd(self):
-        self.code.run_cmd()
+        '''ask code object to run to next command'''
+        pass
+        #self.code.run_cmd()

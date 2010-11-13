@@ -10,8 +10,10 @@ import programmer
 class MOUSE(object):
     def __init__(self):
         #self.prev_selected = None
+        ##currently dragging/dropping, or currently selected item(out of pgrid GUI):
         self.cur_sel = None
-        self.active = 'map'
+        ##active is for old pgrid active tile selection:
+        self.active = None
     # @lib.decorators.propget
     # def cur_selected(self):
         
@@ -28,126 +30,10 @@ class MOUSE(object):
 mouse=MOUSE()
 
 
-class button(object):
-    def __init__(self,center,text_norm,text_high=None,text_click=None):
-        
-        self.text_norm = text_norm
-        
-        if text_high:
-            self.text_high = text_high
-            if text_click:
-                self.text_click = text_click
-            else:
-                self.text_click = text_high
-        else:
-            self.text_high = text_norm
-            
-        
-        self.surf = self.text_norm
-        self.click_tmp=False
-        self.clicked=False
-        
-        self.rect = self.text_norm.get_rect()
-        self.rect.center = center
-        
-        self.is_dock = False
-    def events(self,events):
-        for event in events:
-            if event.type == MOUSEMOTION:#hoverover button
-                if self.rect.collidepoint(event.pos):
-                    if self.surf is self.text_norm:
-                        self.surf = self.text_high
-                else:
-                    self.surf = self.text_norm
-            elif event.type == MOUSEBUTTONDOWN:#click and hold over button
-                if self.rect.collidepoint(event.pos):
-                    self.surf = self.text_click
-                    self.click_tmp=True
-                else:
-                    self.click_tmp=False
-            elif event.type == MOUSEBUTTONUP:#click,hold,and release over button
-                if self.rect.collidepoint(event.pos):
-                    if self.click_tmp:
-                        self.clicked = True#variable for things to use to see if clicked...
-                        self.click_tmp=False
-                else:
-                    self.click_tmp=False
-                    self.clicked=False
-        if self.clicked == True:
-            self.clicked = False
-            return True
-    def draw(self,surf):
-        surf.blit(self.surf,self.rect)
-        
-class dock_button(button):
-    def __init__(self,center,text_norm,text_high=None,text_click=None):
-        super(dock_button,self).__init__(center,text_norm,text_high,text_click)
-        
-        self.docked_btn = None
-        self.is_dock = True
-        
-    def dock(self,btn):
-        if self.docked_btn:
-            return False
-        else:
-            self.docked_btn = btn
-            self.docked_btn.mount = self
-            
-    def remove(self):
-        '''to be defined, remove all docked items as well (eg we delete the entire dragged tree...)'''
-        if hasattr(self.docked_btn,'remove'):
-            self.docked_btn.remove()
-        del self.dock
-        del self
-        
-    def draw(self,surf):
-        super(dock_button,self).draw(surf)
-        ##TODO::: 
-        #if self.docked_btn:
-        #    self.docked_btn.draw(surf,True)
-        
-class drag_button(button):
-    def __init__(self,center,text_norm,text_high=None,text_click=None):
-        super(drag_button,self).__init__(center,text_norm,text_high,text_click)
-        
-        self.mount=None
-    def events(self,events):
-        tmp = super(drag_button,self).events(events)
-        for event in events:
-            if  event.type == MOUSEMOTION:
-                if self.rect.collidepoint(event.pos):
-                    if self.click_tmp == True:
-                        self.rect.center= event.pos
-        return tmp
-    def draw(self,surf,dock_override=False):
-        #if self.mount:
-        #    if not dock_override:
-        #        return None
-        #
-        surf.blit(self.surf,self.rect)
-        pygame.draw.rect(surf, (255,255,255), self.rect, 1)
-        
-class drag_dock(drag_button  , dock_button):
-    def __init__(self,center,text_norm,text_high=None,text_click=None):
-        super(drag_dock,self).__init__(center,text_norm,text_high,text_click)
-        
-        #name the button??
-        self.name = 'unkown'
-        #give button some data... (eg: distance, time, whatnot...)
-        self.data = (1,)
-    def draw(self,surf,dock_override=False):
-        #if self.mount:
-        #    if not dock_override:
-        #        return None
-        #if self.docked_btn:
-        #    self.docked_btn.draw(surf,True)
-        surf.blit(self.surf,self.rect)
-        pygame.draw.rect(surf, (255,255,255), self.rect, 1)
-# input lib
 
 class ConfigError(KeyError): pass
 
-class Config:
+class Config(object):
     """ A utility for configuration """
     def __init__(self, options, *look_for):
         assertions = []
@@ -158,7 +44,7 @@ class Config:
         for key in options.keys():
             if key not in assertions: raise ConfigError(key+' not expected as option')
 
-class Input:
+class Input(object):
     """ A text input for pygame apps 
     blatently stolen from http://www.pygame.org/project/920/
     also this is a bit modified, helps make it work for me in this situation better..."""
@@ -172,7 +58,7 @@ class Input:
         self.color = self.options.color
         self.restricted = self.options.restricted
         self.maxlength = self.options.maxlength
-        self.prompt = self.options.prompt; self.value = ''
+        self.prompt = self.options.prompt; self._value = ''
         self.shifted = False
         
         ##note to self::: fix this class to make it work ALOT better and also force it to fit in this game better
@@ -182,41 +68,57 @@ class Input:
         self.text = self.font.render(self.prompt+self.value, 1, self.color[0])
         
         ##how big should the rect be???
-        self.rect=pygame.Rect((self.options.x,self.options.y),self.text.get_rect().size)
+        self.rect=self.text.get_rect()
+        self.rect.midtop = self.options.x,self.options.y
         self.active = False
+    
+    @lib.decorators.propget
+    def value(self):
+        return self._value
+        
+    @lib.decorators.propset
+    def value(self,mod):
+        self._value=mod
+        if self.active:
+            self.text = self.font.render(self.prompt+self._value, 1, self.color[0])
+        else:
+            self.text = self.font.render(self.prompt+self._value, 1, self.color[1])
+        self.rect = self.text.get_rect()
+        self.rect.midtop = self.options.x,self.options.y
+        map.cur_map.render()
     def set_pos(self, x, y=None):
         """ Set the position to x, y 
         or x can be a tuple of (x,y)"""
         if y is None:
-            self.rect.topleft = x
+            self.rect.midtop = x
         else:
-            self.rect.topleft = x,y
+            self.rect.midtop = x,y
     def set_font(self, font):
         """ Set the font for the input """
         self.font = font
 
-    def draw(self, surface):
+    def draw(self, surface,override):
         """ Draw the text input to a surface """
-        if self.active:
-            self.text = self.font.render(self.prompt+self.value, 1, self.color[0])
+        if self.active or override:
             pygame.draw.rect(surface,(0,200,0),self.rect,2)
         else:
-            self.text = self.font.render(self.prompt+self.value, 1, self.color[1])
             pygame.draw.rect(surface,(0,0,0),self.rect,2)
             
         surface.blit(self.text, self.rect)
         
-    def update(self, events):
+    def update(self, events, override=False):
         """ Update the input based on passed events """
         for event in events:
-            if event.type == MOUSEBUTTONDOWN:
+            #dont update active, something else is taking care of that.
+            if event.type == MOUSEBUTTONDOWN and override==False:
                 if self.rect.collidepoint(event.pos):
                     self.active = True
                 else:
                     self.active = False
             if event.type == KEYUP:
                 if event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = False
-            if event.type == KEYDOWN and self.active:
+            #again, added override,just in case
+            if event.type == KEYDOWN and (self.active or override):
                 if event.key == K_BACKSPACE: self.value = self.value[:-1]
                 elif event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = True
                 elif event.key == K_SPACE: self.value += ' '

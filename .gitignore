@@ -1,0 +1,48 @@
+#coustom ignores
+#ignore log file
+roving-robots.log
+
+#ignore tile file
+random-tile-name-file.txt
+
+#bad image stuff:
+*/Thumbs.db
+
+
+#python.gitignore
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+#py2exe
+dist
+build
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+
+#pydev.gitignore
+
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# CDT-specific
+.cprojec

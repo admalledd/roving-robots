@@ -17,7 +17,7 @@ class interface(object):
                           
         self.lft_spawn = (lib.common.load_img(os.path.join('gui','programmer','turn-left_tlft.png')),
                           pygame.Rect((650,115),(80,80)) )
-         
+
         self.rght_spawn = (lib.common.load_img(os.path.join('gui','programmer','turn-right_trght.png')),
                           pygame.Rect((650,205),(80,80)) )
                           

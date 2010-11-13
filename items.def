@@ -1,0 +1,37 @@
+Items
+    Sensors
+        Environment Obstacle Sensor:  General safety as well as no camera.
+        Camera:  Adds storage of map data only viewable after uplink. (Limited Storage?)
+        Comms: Transmits data 25 squares away (1/2 = Rainy Day, 1/4 = Lightning)
+        Geology:
+        Engineering: Allows containing of high energy containers
+       
+     Tools
+        Excavtor/Mine: Allows to mine materials
+        Arm:
+        Heavy Arm
+        Manipulator:
+        
+        Side
+            Storage Container: Holds 100 tons 
+            Extra Power Pack: Holds 150 power
+            
+         Back
+            Person Courier: TT#XNul Class Sentient Being
+            Smelter: Refines 10 tons ore/ 1 ton metal
+            RepRap Part Factory:  Consumes 5 energy 2 metal to heal friendly robot if you have manipulator
+     
+        
+Datalogs
+Metallics
+    Scrap Metal 15-20 metal
+    Raw Ore 10-20 metal
+    Salvage 25-50% of origninal robot
+    Processed metal: 25-50 metal
+Energetics
+    Solar Array - 5 energy/day
+    Fuel Cell - 10-20 energy-0decay
+    Power Cell - 25-50 energy 2decay/day
+    Small Fusion Reactor - 25 energy/day
+    Salvage - 0-25% of orignal power unit
+    

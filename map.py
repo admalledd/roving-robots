@@ -8,6 +8,9 @@ import lib
 
 from tiles import tile
 
+#these are global objects created by load_map.py or programmer.create_programming_gui() respectivly
+map=None
+cur_map=None
 
 class MAP(object):
     '''self.map={(x,y):(tile,rect,border color}
@@ -16,8 +19,9 @@ class MAP(object):
     
     possibly creature/objects on said tile?'''
     def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
-        if lib.common.debug > 0:
-            self.font = pygame.font.Font(None, 18)
+        if lib.common.debug() > 0:
+            import os
+            self.font = lib.common.font
         self.map_size=r_c
         self.sub_rect=sub_rect
         self.main_rect=main_rect
@@ -31,7 +35,7 @@ class MAP(object):
                 color = (255,255,0)
                 #set map items::: tile class, rect, and grid color
                 self.map[(x,y)]=[tclass(),tmp,color]
-        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
+        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height),pygame.SRCALPHA)
         
         self.loc=(0,0)
     def render(self):
@@ -55,21 +59,21 @@ class MAP(object):
                         ##enable to draw rect outlines
                         if self.show_grid:
                             pygame.draw.rect(self.surf, self.map[(xx,yy)][2], tmp_r, 1)
-                        if lib.common.debug > 0:
+                        if lib.common.debug() > 0:
                             #render tile number text...
                             text = self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha()
                             self.surf.blit(text,tmp_r)
                 except KeyError:
                     pass#key that doesnt exist? how and why?
                     #keys that go out of the map is what happens when we have a blank tile in the viewport...
-                    if lib.common.debug >2:
-                        print x,y
-                        print xx,yy
-        if lib.common.debug > 0:
+                    if lib.common.debug() >2:
+                        logger.debug('map location temp:%s,%s'%(x,y))
+                        logger.debug('missing tile     :%s,%s'%(xx,yy))
+        if lib.common.debug() > 0:
             self.surf.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
             self.surf.blit(self.font.render(str(self.loc)
                         ,True,(0,0,255)).convert_alpha(),(0,12))
-        if lib.common.debug > 1:
+        if lib.common.debug() > 1:
             #draw rect around main map area... disabled until i need it for the multi interface...
             pygame.draw.rect(self.surf, (0,255,255), self.main_rect, 1)
         
@@ -92,7 +96,7 @@ class MAP(object):
                         xx=self.loc[0]+x
                         yy=self.loc[1]+y
                         if self.map[(xx,yy)][1].collidepoint(pos):
-                            logging.debug("%s,%s clicked"%(xx,yy))
+                            logger.debug("%s,%s clicked"%(xx,yy))
                             return (xx,yy)
                             
                     except KeyError:
@@ -114,3 +118,10 @@ class MAP(object):
         now, if only there was a way to get pydev to understand this...'''
         self._loc=value
         self.render()
+    def tile_gen(self):
+        '''a generator using <yeild> to help with iterating over _every_ tile'''
+        for x in range(self.map_size[0]-1):
+            for y in range(self.map_size[1]-1):
+                yield self.map[(x,y)],(x,y)
+
+

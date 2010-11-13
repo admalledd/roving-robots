@@ -96,4 +96,6 @@ def load_img(name):
         raise SystemExit, message
     return image
 
+pygame.font.init()
 
+font = pygame.font.Font(os.path.join(curdir,'data','freesansbold.ttf'), 12)

@@ -1,11 +1,11 @@
 import os
-
+import logging
+logger=logging.getLogger('vehicle')
 import pygame
 from pygame.locals import *
 
 
 import lib.common 
-
 from lib.decorators import *
 
 import map
@@ -31,6 +31,8 @@ class rcx(object):
         self.ani_step = 0
         
         ##removed code sample, merging pgrid.py into programmer.py
+        self.code=None
+        self.cur_cmd=None
         
     def draw(self,screen):
         self.rect.center = map.map.map[self.loc][1].center
@@ -234,6 +236,19 @@ class rcx(object):
         pass
         
     def run_cmd(self):
-        '''ask code object to run to next command'''
-        pass
-        #self.code.run_cmd()
+        '''ask code object to run to next command
+        note: returning to code after completion is _INTENDED_ to take two "runs"
+              it was just by hapenstance that it uses two, one for the last bgnd block
+              and one for main block.'''
+        if self.cur_cmd is None:
+            if self.code != None:
+                self.cur_cmd = self.code.map[programmer.MAIN_BLOCK][0]
+            else:
+                logger.warn('robot tried to run with no code!')
+                self.play_sound('err')
+                return
+        logger.debug('cur_cmd:%s'%self.cur_cmd)
+        self.cur_cmd.action(self)
+        self.cur_cmd = self.cur_cmd.next(self)
+        
+        

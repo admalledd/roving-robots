@@ -33,7 +33,7 @@ mouse=MOUSE()
 
 class ConfigError(KeyError): pass
 
-class Config:
+class Config(object):
     """ A utility for configuration """
     def __init__(self, options, *look_for):
         assertions = []
@@ -44,7 +44,7 @@ class Config:
         for key in options.keys():
             if key not in assertions: raise ConfigError(key+' not expected as option')
 
-class Input:
+class Input(object):
     """ A text input for pygame apps 
     blatently stolen from http://www.pygame.org/project/920/
     also this is a bit modified, helps make it work for me in this situation better..."""
@@ -58,7 +58,7 @@ class Input:
         self.color = self.options.color
         self.restricted = self.options.restricted
         self.maxlength = self.options.maxlength
-        self.prompt = self.options.prompt; self.value = ''
+        self.prompt = self.options.prompt; self._value = ''
         self.shifted = False
         
         ##note to self::: fix this class to make it work ALOT better and also force it to fit in this game better
@@ -68,26 +68,40 @@ class Input:
         self.text = self.font.render(self.prompt+self.value, 1, self.color[0])
         
         ##how big should the rect be???
-        self.rect=pygame.Rect((self.options.x,self.options.y),self.text.get_rect().size)
+        self.rect=self.text.get_rect()
+        self.rect.midtop = self.options.x,self.options.y
         self.active = False
+    
+    @lib.decorators.propget
+    def value(self):
+        return self._value
+        
+    @lib.decorators.propset
+    def value(self,mod):
+        self._value=mod
+        if self.active:
+            self.text = self.font.render(self.prompt+self._value, 1, self.color[0])
+        else:
+            self.text = self.font.render(self.prompt+self._value, 1, self.color[1])
+        self.rect = self.text.get_rect()
+        self.rect.midtop = self.options.x,self.options.y
+        map.cur_map.render()
     def set_pos(self, x, y=None):
         """ Set the position to x, y 
         or x can be a tuple of (x,y)"""
         if y is None:
-            self.rect.topleft = x
+            self.rect.midtop = x
         else:
-            self.rect.topleft = x,y
+            self.rect.midtop = x,y
     def set_font(self, font):
         """ Set the font for the input """
         self.font = font
 
-    def draw(self, surface):
+    def draw(self, surface,override):
         """ Draw the text input to a surface """
-        if self.active:
-            self.text = self.font.render(self.prompt+self.value, 1, self.color[0])
+        if self.active or override:
             pygame.draw.rect(surface,(0,200,0),self.rect,2)
         else:
-            self.text = self.font.render(self.prompt+self.value, 1, self.color[1])
             pygame.draw.rect(surface,(0,0,0),self.rect,2)
             
         surface.blit(self.text, self.rect)

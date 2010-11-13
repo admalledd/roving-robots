@@ -8,6 +8,9 @@ import lib
 
 from tiles import tile
 
+#these are global objects created by load_map.py or programmer.create_programming_gui() respectivly
+map=None
+cur_map=None
 
 class MAP(object):
     '''self.map={(x,y):(tile,rect,border color}
@@ -18,7 +21,7 @@ class MAP(object):
     def __init__(self,r_c=(160,121),sub_rect=pygame.Rect((0,0),(50,50)),main_rect=pygame.Rect((0,0),(475,475)),tclass=tile):
         if lib.common.debug() > 0:
             import os
-            self.font = pygame.font.Font(os.path.join(lib.common.curdir,'data','freesansbold.ttf'), 12)
+            self.font = lib.common.font
         self.map_size=r_c
         self.sub_rect=sub_rect
         self.main_rect=main_rect

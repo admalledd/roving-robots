@@ -40,7 +40,7 @@ def main():
                 #input.mouse.click_engine(event.pos)
                 logger.info(map.map.click_engine(event.pos))
             elif event.type == KEYDOWN and event.key == K_p:
-                programmer.create_programming_gui(screen)
+                v.code = programmer.create_programming_gui(screen,v.code)
         screen.fill((0, 0, 0))
         map.map.draw(screen)
         v.events(events)

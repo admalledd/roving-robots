@@ -12,18 +12,19 @@ import blocks
 MAIN_BLOCK=(5,0)
 class interface(object):
     def __init__(self,pmap):
-        self.fwd_spawn = (lib.common.load_img(os.path.join('gui','programmer','forward_pfwd.png')),
+        self.fwd_spawn = (blocks.pfwd_block(),
                           pygame.Rect((650,25),(80,80)) )
                           
-        self.lft_spawn = (lib.common.load_img(os.path.join('gui','programmer','turn-left_tlft.png')),
+        self.lft_spawn = (blocks.trnl_block(),
                           pygame.Rect((650,115),(80,80)) )
 
-        self.rght_spawn = (lib.common.load_img(os.path.join('gui','programmer','turn-right_trght.png')),
+        self.rght_spawn = (blocks.trnr_block(),
                           pygame.Rect((650,205),(80,80)) )
                           
         
         self.spawns = {'pfwd':(self.fwd_spawn,blocks.pfwd_block),
-                       'lft' :(self.lft_spawn,blocks.trnl_block)}
+                       'lft' :(self.lft_spawn,blocks.trnl_block),
+					   'rght':(self.rght_spawn,blocks.trnr_block)}
         
         pmap.map[(5,0)][0]=blocks.main_block(MAIN_BLOCK)
         
@@ -45,8 +46,8 @@ class interface(object):
     def draw(self, screen):
         #screen.blit(self.surf, self.rect)
         for key,value in self.spawns.items():
-            screen.blit(value[0][0],value[0][1])
-            
+            #screen.blit(value[0][0],value[0][1])
+            value[0][0].draw(screen,value[0][1])
 
 def create_programming_gui(screen,pmap):
     back_ground = screen.copy()

@@ -36,9 +36,8 @@ def main():
                 pygame.quit()
                 return None
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
-                pass
-                #input.mouse.click_engine(event.pos)
                 logger.info(map.map.click_engine(event.pos))
+				
             elif event.type == KEYDOWN and event.key == K_p:
                 v.code = programmer.create_programming_gui(screen,v.code)
         screen.fill((0, 0, 0))

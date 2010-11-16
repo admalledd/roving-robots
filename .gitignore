@@ -8,6 +8,9 @@ random-tile-name-file.txt
 #bad image stuff:
 */Thumbs.db
 
+#ignore openoffice lock files:
+*.odt#
+
 
 #python.gitignore
 *.py[co]

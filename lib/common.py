@@ -99,4 +99,4 @@ def load_img(name):
 
 pygame.font.init()
 
-font = pygame.font.Font(os.path.join(curdir,'data','freesansbold.ttf'), 12)
+font = pygame.font.Font(os.path.join(curdir,'data','fonts','freesansbold.ttf'), 12)

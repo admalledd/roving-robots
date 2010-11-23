@@ -19,6 +19,7 @@ import lib.decorators
 
 _debug = 0
 def debug(value=None):
+    '''function so set or return current debug level'''
     global _debug
     if value is None:
         return _debug

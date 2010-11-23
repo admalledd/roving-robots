@@ -109,16 +109,16 @@ def create_programming_gui(screen,pmap):
                         
                         input.mouse.cur_sel = None
                     pmap.render()
-                ##TODO::: use the blocks own event_engine to do dragging? (click only in block.drag_rect?)
+                
                 
                 elif input.mouse.cur_sel is None and \
                      (map_pos != (-1,-1)) and \
                      pmap.map[map_pos][0].draggable and \
                      pmap.map[map_pos][0].check_drag_click(pmap,event.pos,map_pos):
-                    #we have no mouse item
-                    #map pos is good
-                    #button CAN be dragged...
-                    #click hits drag location on tile
+                    ##we have no mouse item
+                    ##map pos is good
+                    ##button CAN be dragged...
+                    ##click hits drag location on tile
                     input.mouse.cur_sel = pmap.map[map_pos][0].drag(pmap)
                     pmap.render()
                     

@@ -122,8 +122,8 @@ setup(console=[
 if os.path.exists('dist/tcl'): shutil.rmtree('dist/tcl') 
  
 # Remove the build tree
-#if REMOVE_BUILD_ON_EXIT:
-#     shutil.rmtree('build/')
+if REMOVE_BUILD_ON_EXIT:
+     shutil.rmtree('build/')
  
 if os.path.exists('dist/tcl84.dll'): os.unlink('dist/tcl84.dll')
 if os.path.exists('dist/tk84.dll'): os.unlink('dist/tk84.dll')

@@ -240,8 +240,9 @@ class rcx(object):
         note: returning to code after completion is _INTENDED_ to take two "runs"
               it was just by hapenstance that it uses two, one for the last bgnd block
               and one for main block.'''
-        if self.cur_cmd is None:
-            if self.code != None:
+        print self.cur_cmd
+        if not self.cur_cmd:
+            if self.code:
                 self.cur_cmd = self.code.map[programmer.MAIN_BLOCK][0]
             else:
                 logger.warn('robot tried to run with no code!')

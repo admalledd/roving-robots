@@ -10,31 +10,47 @@ import input
 import lib
 import blocks
 MAIN_BLOCK=(5,0)
+class remover(object):
+    def __init__(self):
+        self.surf = lib.common.load_img(os.path.join('gui','programmer','trash.png'))
+    def draw(self,surf,rect):
+        surf.blit(self.surf,rect)
+
+
 class interface(object):
     def __init__(self,pmap):
-        self.fwd_spawn = (blocks.pfwd_block(),
-                          pygame.Rect((650,25),(80,80)) )
-                          
-        self.lft_spawn = (blocks.trnl_block(),
-                          pygame.Rect((650,115),(80,80)) )
-
-        self.rght_spawn = (blocks.trnr_block(),
-                          pygame.Rect((650,205),(80,80)) )
-                          
+        self.inmap = map.MAP(r_c=(1,15),
+                             sub_rect=pygame.Rect((0,0),(80,80)),
+                             main_rect=pygame.Rect((700,0),(80,560)),
+                             tclass=blocks.bgnd_block
+                            )
+                       
+        self.inmap.map[(0,1)][0] = blocks.pfwd_block()
+        self.inmap.map[(0,2)][0] = blocks.trnl_block()
+        self.inmap.map[(0,3)][0] = blocks.trnr_block()
         
-        self.spawns = {'pfwd':(self.fwd_spawn,blocks.pfwd_block),
-                       'lft' :(self.lft_spawn,blocks.trnl_block),
-					   'rght':(self.rght_spawn,blocks.trnr_block)}
+        self.inmap.show_grid=True
+        
+        self.inmap.render()
+        
         
         pmap.map[(5,0)][0]=blocks.main_block(MAIN_BLOCK)
         
     def click_engine(self,pos):
         '''this is for the spawning and other thing within the interface
         it has nothing to do with the event engine of the pmap system...'''
-        for key,value in self.spawns.items():
-            if value[0][1].collidepoint(pos):
-                logger.debug('hit spawn:%s'%key)
-                return value[1]()
+        #for key,value in self.spawns.items():
+        #    if value[0][1].collidepoint(pos):
+        #        logger.debug('hit spawn:%s'%key)
+        #        return value[1]()
+        
+        logger.debug('running intr.click_engine')
+        intr_button = self.inmap.click_engine(pos)
+        
+        if intr_button != (-1,-1):
+            if isinstance(self.inmap.map[intr_button][0],blocks.block):
+                input.mouse.cur_sel = self.inmap.map[intr_button][0].__class__()
+                
     def event_engine(self,events,pmap):
         '''pass all events to all tiles, and also update this interface.'''
         #for event in events:
@@ -44,11 +60,9 @@ class interface(object):
             tile[0].event_engine(events,pmap,loc)
         
     def draw(self, screen):
-        #screen.blit(self.surf, self.rect)
-        for key,value in self.spawns.items():
-            #screen.blit(value[0][0],value[0][1])
-            value[0][0].draw(screen,value[0][1])
-
+        #for key,value in self.spawns.items():
+            #value[0][0].draw(screen,value[0][1])
+        self.inmap.draw(screen)
 def create_programming_gui(screen,pmap):
     back_ground = screen.copy()
     if pmap == None:
@@ -75,12 +89,18 @@ def create_programming_gui(screen,pmap):
         screen.blit(back_ground,(0,0))
         
         #lag drawing by one loop, allaowing events to draw OVER screen...
-        intr.draw(screen)
         pmap.draw(screen)
+        intr.draw(screen)
+        
         events = pygame.event.get()
         
         for event in events:
             if (event.type == KEYDOWN and event.key == K_p):
+                ##time to return a pmap object, clean up things first though...
+                del intr
+                input.mouse.cur_sel = None
+                
+                ##done cleaning, return pmap
                 return pmap
             if event.type == KEYDOWN:
                 if event.key == K_LEFT:
@@ -99,18 +119,17 @@ def create_programming_gui(screen,pmap):
                 else:
                     tile_rel = (-2,-2)
                 logger.debug("m=%s t=%s r=%s"%(event.pos,map_pos,tile_rel))
-                #drop button
+                ##drop button
                 if input.mouse.cur_sel and (map_pos != (-1,-1)):
                     
                     if input.mouse.cur_sel.able_drop(map_pos,pmap):
                         input.mouse.cur_sel.drop(map_pos,pmap)
-                        
-                        #pmap.map[map_pos][0] = input.mouse.cur_sel
-                        
+                        ##dont forget to clean mouse...
                         input.mouse.cur_sel = None
+                        
                     pmap.render()
                 
-                
+                ##pick up button
                 elif input.mouse.cur_sel is None and \
                      (map_pos != (-1,-1)) and \
                      pmap.map[map_pos][0].draggable and \
@@ -121,20 +140,14 @@ def create_programming_gui(screen,pmap):
                     ##click hits drag location on tile
                     input.mouse.cur_sel = pmap.map[map_pos][0].drag(pmap)
                     pmap.render()
-                    
-                ##ok... we FINALY finished darg+drop, now to avtive/inactive:
-                #elif input.mouse.cur_sel is None and \
-                #     (map_pos != (-1,-1)):
-                #    input.mouse.active = 
                 
                 elif map_pos == (-1,-1):
-                    #we are off the map, lets check if the interface needs anything...
+                    ##we are off the map, lets check if the interface needs anything...
                     
-                    #try to make a button, remove whatever is __in__ the mouse right now
-                    ret = intr.click_engine(event.pos)
-                    if ret:
-                        input.mouse.cur_sel = ret
-                        
+                    ##try to make a button, remove whatever is __in__ the mouse right now
+                    ##moved button ccreation to intrface, should have been its job from start
+                    intr.click_engine(event.pos)
+                    
                 
         intr.event_engine(events,pmap)
         if input.mouse.cur_sel:
@@ -154,4 +167,4 @@ if __name__ == '__main__':
     import tiles
     tiles.find_tiles()
     
-    create_programming_gui(screen)
+    create_programming_gui(screen,None)

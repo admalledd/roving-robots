@@ -40,6 +40,7 @@ class MAP(object):
         self.loc=(0,0)
     def render(self):
         '''iterate through every tile and move it and draw the contents'''
+        logger.debug('rendering map')
         self.surf.fill((0,0,0))
         for x in range(self.main_rect.width/self.sub_rect.width):
             for y in range(self.main_rect.height/self.sub_rect.height):
@@ -49,9 +50,14 @@ class MAP(object):
                     yy=self.loc[1]+y
                     #move the rectangle
                     tmp_r=self.map[(xx,yy)][1]
-                    tmp_r.topleft=((self.main_rect.left +(x*self.sub_rect.width  )),
+                    tmp_r.topleft=(x*self.sub_rect.width,
+                                   y*self.sub_rect.height )
+                    #create copy to move and check against...
+                    r_check = pygame.Rect(tmp_r)
+                    
+                    r_check.topleft=((self.main_rect.left +(x*self.sub_rect.width  )),
                                    (self.main_rect.top  +(y*self.sub_rect.height )))
-                    if self.main_rect.contains(tmp_r):
+                    if self.main_rect.contains(r_check):
                         #if the rect fits, draw it, else dont
                         self.map[(xx,yy)][0].draw(self.surf,tmp_r)
                         #self.surf.blit(self.map[(xx,yy)][0].surf,tmp_r)#render tile to map self.surf...
@@ -87,14 +93,16 @@ class MAP(object):
     
     def click_engine(self,pos):
         '''return what tile was clicked. (tile pos only?)'''
-        
         if self.main_rect.collidepoint(pos):
-            for x in range(self.map_size[0]-1):
-                for y in range(self.map_size[1]-1):
+            #fix pos for how far away from tl of screen we are...
+            #must be done thanks to psudo surface
+            pos=(pos[0]-self.main_rect.left,pos[1]-self.main_rect.top)
+            for x in range(self.map_size[0]):
+                for y in range(self.map_size[1]):
                     try:
                         #set current grid x and y locations
-                        xx=self.loc[0]+x
-                        yy=self.loc[1]+y
+                        xx=self.loc[0]+(x)
+                        yy=self.loc[1]+(y)
                         if self.map[(xx,yy)][1].collidepoint(pos):
                             logger.debug("%s,%s clicked"%(xx,yy))
                             return (xx,yy)

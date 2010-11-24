@@ -35,6 +35,7 @@ class block(object):
                 self.tbox = num
             else:
                 self.tbox = input.Input(y=40,x=40,maxlength=3, color=(255,0,0), prompt='#:', restricted='0123456789')
+            self._old_tbox_value = ''
         else:
             #used to let us know NOT to try and render this section
             self.tbox = None
@@ -76,6 +77,9 @@ class block(object):
         
         if self.tbox and self.active:
             self.tbox.update(events,True)
+            if self._old_tbox_value != self.tbox.value:
+                self._old_tbox_value = self.tbox.value
+                pmap.render()
         for event in events:
             if event.type == KEYDOWN:
                 if event.key == K_RETURN:

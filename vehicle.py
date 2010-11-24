@@ -240,7 +240,6 @@ class rcx(object):
         note: returning to code after completion is _INTENDED_ to take two "runs"
               it was just by hapenstance that it uses two, one for the last bgnd block
               and one for main block.'''
-        print self.cur_cmd
         if not self.cur_cmd:
             if self.code:
                 self.cur_cmd = self.code.map[programmer.MAIN_BLOCK][0]

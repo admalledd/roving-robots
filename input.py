@@ -50,7 +50,7 @@ class Input(object):
     also this is a bit modified, helps make it work for me in this situation better..."""
     def __init__(self, **options):
         """ Options: x, y, font, color, restricted, maxlength, prompt """
-        self.options = Config(options, ['x', '0'], ['y', '0'], ['font', 'pygame.font.Font(None, 32)'],
+        self.options = Config(options, ['x', '0'], ['y', '0'], ['font', 'pygame.font.Font(lib.common.os.path.join(lib.common.curdir,"data","fonts","freesansbold.ttf"), 32)'],
                               ['color', '(0,0,0)'], ['restricted', '\'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&\\\'()*+,-./:;<=>?@[\]^_`{|}~\''],
                               ['maxlength', '-1'], ['prompt', '\'\''])
         

@@ -19,6 +19,7 @@ import lib.decorators
 
 _debug = 0
 def debug(value=None):
+    '''function so set or return current debug level'''
     global _debug
     if value is None:
         return _debug
@@ -98,4 +99,4 @@ def load_img(name):
 
 pygame.font.init()
 
-font = pygame.font.Font(os.path.join(curdir,'data','freesansbold.ttf'), 12)
+font = pygame.font.Font(os.path.join(curdir,'data','fonts','freesansbold.ttf'), 12)

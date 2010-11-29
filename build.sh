@@ -1,22 +1,24 @@
 #!/bin/sh
-echo "removing previous builds..."
-./clean.sh
-rm -r dist/
-echo "cleaning done, BUILD!"
 
-if [ -d "/cygdrive/c/prog/python" ]; then
-    #cygwin (VM box cygwin windows xp sp2)
-    #or my laptops' cygwin
-    export pywin="/cygdrive/c/prog/python/"
-    $pywin/python.exe setup.py py2exe
-elif [ -d "/cygdrive/f/prog/python" ]; then
-    #cygwin (VM box cygwin windows xp sp2)
+if [ -d "/cygdrive/f/prog/python" ]; then
+    #cygwin
+    #my flash drive
     export pywin="/cygdrive/f/prog/python/"
-    $pywin/python.exe setup.py py2exe
+    $pywin/python.exe setup.py
+#C:\prog\PortablePython_1.1_py2.6.1\App
+elif [ -d "/cygdrive/c/prog/PortablePython_1.1_py2.6.1/App" ]; then
+    #VM machine's python...
+    echo "vm interior build"
+    export pywin="/cygdrive/c/prog/PortablePython_1.1_py2.6.1/App"
+    $pywin/python.exe setup.py
 elif [ -d "/c/python" ]; then
     #mingw32 (laptop)
     export pywin="/c/python/"
-    $pywin/python.exe setup.py py2exe
+    $pywin/python.exe setup.py
+elif [ -d "/cygdrive/c/prog/python" ]; then
+    #my laptops' cygwin
+    export pywin="/cygdrive/c/prog/python/"
+    $pywin/python.exe setup.py
 elif [ -d "/home/admalledd/.PlayOnLinux/" ];then
     #actually running on linux, try to connect to virtual box cygwin sshd, and run build there...
     #some one needs to update this section to handle other computers besides MY build computers
@@ -25,15 +27,3 @@ elif [ -d "/home/admalledd/.PlayOnLinux/" ];then
     exit 0;
 fi
 
-
-echo "build done, copying required dll's"
-cp $pywin/Lib/site-packages/pygame/*.dll ./dist/
-echo "copy done, creating test code..."
-echo "main.exe" > dist/run.bat
-echo "pause" >> dist/run.bat
-
-echo "main.exe -vvvv" > dist/debug.bat
-echo "pause" >> dist/debug.bat
-
-echo "done, done done... now cleaning extras..."
-./clean.sh

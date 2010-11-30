@@ -12,6 +12,17 @@ from tiles import tile
 map=None
 cur_map=None
 
+
+##        .==.        .==.          
+##       //`^\\      //^`\\         
+##      // ^ ^\(\__/)/^ ^^\\        
+##     //^ ^^ ^/6  6\ ^^ ^ \\       
+##    //^ ^^ ^/( .. )\^ ^ ^ \\      
+##   // ^^ ^/\| v""v |/\^ ^ ^\\     
+##  // ^^/\/ /  `~~`  \ \/\^ ^\\    
+##  -----------------------------
+### HERE BE DRAGONS
+
 class MAP(object):
     '''self.map={(x,y):(tile,rect,border color}
     third data point is left in as the possibility remains

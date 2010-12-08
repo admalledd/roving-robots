@@ -39,6 +39,7 @@ def main():
                 logger.info(map.map.click_engine(event.pos))
 				
             elif event.type == KEYDOWN and event.key == K_p:
+                ##warning:: blocking code
                 v.code = programmer.create_programming_gui(screen,v.code)
         screen.fill((0, 0, 0))
         map.map.draw(screen)

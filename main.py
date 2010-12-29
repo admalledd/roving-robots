@@ -6,6 +6,9 @@ logger = logging.getLogger('main')
 import pygame
 from pygame.locals import *
 
+
+import config
+
 import map
 import lib.common
 
@@ -16,9 +19,9 @@ import load_map
 import vehicle
 import programmer
 
-def main():
+def main(options):
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((800, 600),pygame.SRCALPHA)
     #load map tiles...
     tiles.find_tiles()
     #load map... (can be called again(?) to change to a new map...)
@@ -32,15 +35,20 @@ def main():
         
         events = pygame.event.get()
         for event in events:
-            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            if event.type == QUIT:
                 pygame.quit()
                 return None
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
                 logger.info(map.map.click_engine(event.pos))
-				
-            elif event.type == KEYDOWN and event.key == K_p:
-                ##warning:: blocking code
-                v.code = programmer.create_programming_gui(screen,v.code)
+			
+            elif event.type == KEYDOWN:
+                if event.key == config.keycfg.getint('keymap','open_menu'):
+                    ##to be changed later to actually open a main menu like thingy with save and stuff...
+                    config.change_config(screen)
+            
+                elif event.key == config.keycfg.getint('keymap','open_programmer'):
+                    ##warning:: blocking code
+                    v.code = programmer.create_programming_gui(screen,v.code)
         screen.fill((0, 0, 0))
         map.map.draw(screen)
         v.events(events)
@@ -57,4 +65,5 @@ if __name__ == '__main__':
         if sys.argv[1].startswith('-v'):
             lib.common.debug(len(sys.argv[1][1:]))
     if lib.common.debug()>0:logger.info('debug level is:%s'%lib.common.debug())
-    main()
+    main(None)
+    

@@ -62,7 +62,7 @@ def change_config(screen):
                                                 'map_right':K_RIGHT
                                                 
                                            }
-                import sys
+                
                 keycfg.write(open(os.path.join(lib.common.curdir,'config.ini'),'w'))
                 
     

@@ -51,7 +51,7 @@ class MAP(object):
         self.loc=(0,0)
     def render(self):
         '''iterate through every tile and move it and draw the contents'''
-        logger.debug('rendering map')
+        logger.debug('rendering map::(%s,%s)'%(self.loc))
         self.surf.fill((0,0,0))
         for x in range(self.main_rect.width/self.sub_rect.width):
             for y in range(self.main_rect.height/self.sub_rect.height):
@@ -83,9 +83,10 @@ class MAP(object):
                 except KeyError:
                     pass#key that doesnt exist? how and why?
                     #keys that go out of the map is what happens when we have a blank tile in the viewport...
-                    if lib.common.debug() >2:
-                        logger.debug('map location temp:%s,%s'%(x,y))
-                        logger.debug('missing tile     :%s,%s'%(xx,yy))
+                    if (xx >= 0 and yy >= 0):
+                        if lib.common.debug() >2:
+                            logger.debug('map location temp:%s,%s'%(x,y))
+                            logger.debug('missing tile     :%s,%s'%(xx,yy))
         if lib.common.debug() > 0:
             self.surf.blit(self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha(),(0,24))
             self.surf.blit(self.font.render(str(self.loc)

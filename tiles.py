@@ -64,18 +64,9 @@ class Tile_Cache(object):
                     #see if similarly tagged img is in the cache...
                     imgname=f.split('.')[0].split('_')[1]
                     if imgname in self.cache:
-                        old=self.cache[imgname]
-                        
-                        ##TODO:: figure out how to use a tuple instead...
-                        self.cache[imgname]=[lib.common.load_img(os.path.join(dir,f))]
-                        try: 
-                            if type(old) is list:
-                                for im in old:
-                                    self.cache[imgname].append(im)
-                        except TypeError:
-                            self.cache[imgname].append(old)
+                        self.cache[imgname].append(lib.common.load_img(os.path.join(dir,f)))
                     else:
-                        self.cache[imgname]= lib.common.load_img(os.path.join(dir,f))
+                        self.cache[imgname]= [lib.common.load_img(os.path.join(dir,f))]
                         
         if lib.common.debug() >2:
             import pprint

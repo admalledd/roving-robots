@@ -12,6 +12,7 @@ set_dir code doc:::
         3:::if none of these worked, find the location of this file and use it.'''
 import os
 import logging
+import textwrap
 
 import pygame
 
@@ -81,8 +82,9 @@ logger.debug('current path: %s'%os.getcwd())
 logger.debug('currect tmp_path: %s'%curdir)
 
 @lib.decorators.memoized
-def load_img(name):
+def load_img(*name):
     """ Load image and return image object"""
+    name = os.path.join(*name)
     fullname = os.path.join(curdir,'data','img',name)
     try:
         image = pygame.image.load(fullname)
@@ -96,7 +98,30 @@ def load_img(name):
         logger.critical('Cannot load image: %s'%fullname)
         raise SystemExit, message
     return image
-
+    
+def txt_box_render(raw_text,mian_rect,color=(0,0,0),ffont=None):
+    '''takes in a string and splits it according to the main_rect's width,
+    then renders it and returns a list of pygame.surfaces and rects'''
+    if ffont==None:
+        ffont=font##use lib.common.font
+    txt=[]
+    
+    ##debug line, use if things are really broken...
+    #print mian_rect.height/float(ffont.size(raw_text)[1])
+    for index,text in enumerate(raw_text.split('\n')):
+        #kazunthieght...
+        for num,line in enumerate(textwrap.wrap(text,int(float(mian_rect.width)/(float(ffont.size(text)[0])/float(len(text)))))):
+            ##render a line of text
+            temp_var=ffont.render(line,True,color).convert_alpha()
+            rect=temp_var.get_rect()
+            topleft=mian_rect.topleft
+            rect.topleft=(topleft[0],topleft[1]+(rect.height*num)+(rect.height*index))
+            
+            ##add to our list the current txt line...
+            txt.append((temp_var,rect))
+    ##return a list of img's to blit and thier rects...
+    return txt
+    
 pygame.font.init()
 
 font = pygame.font.Font(os.path.join(curdir,'data','fonts','freesansbold.ttf'), 12)

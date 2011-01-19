@@ -25,6 +25,14 @@ keymap=keycfg._sections['keymap']
 def change_config(screen):
     
     back_ground = screen.copy()
+    back_ground.blit(lib.common.load_img('gui','menu','background.png'),(80,60))
+    
+    #text to render and draw...
+    info=lib.common.txt_box_render('''welcome to the configuration menu!\npress enter to return keyconfig to defaults\npress esc to return to game''',
+                                  pygame.Rect((80,60),(320,240)),
+                                  (255,255,255)
+                                  )
+    
     
     
     clock = pygame.time.Clock()
@@ -38,7 +46,7 @@ def change_config(screen):
         
         #draw background (img of robots/terrain)
         screen.blit(back_ground,(0,0))
-        screen.fill((0, 25, 0,50))
+        
         
         events = pygame.event.get()
         for event in events:
@@ -49,7 +57,7 @@ def change_config(screen):
                 #keymap['open_proggrammer']=K_p
                 
             elif event.type == KEYDOWN and event.key == K_RETURN:
-                print 'new keymap loaded'
+                logger.info('default keymap loaded')
                 keycfg._sections['keymap']={
                                                 '__name__':'keymap',#was part of the original dict...
                                                 'open_programmer':K_p,
@@ -65,7 +73,8 @@ def change_config(screen):
                 
                 keycfg.write(open(os.path.join(lib.common.curdir,'config.ini'),'w'))
                 
-    
+        for line,rect in info:
+            screen.blit(line,rect)
         pygame.display.flip()
     
 if __name__ == '__main__':

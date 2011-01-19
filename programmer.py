@@ -12,7 +12,7 @@ import blocks
 MAIN_BLOCK=(5,0)
 class remover(object):
     def __init__(self):
-        self.surf = lib.common.load_img(os.path.join('gui','programmer','trash.png'))
+        self.surf = lib.common.load_img('gui','programmer','trash.png')
     def draw(self,surf,rect):
         surf.blit(self.surf,rect)
 

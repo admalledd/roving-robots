@@ -17,8 +17,13 @@ class block(object):
         we draw img's onto fake smaller surface so that we can use IT for an absilute topleft'''
         ##TODO::: make "active" setting for textbox, and other settings???
         
-        if type(img) == str:
-            self.img = lib.common.load_img(img)
+        if type(img) in (str,tuple,list):
+            if type(img) in (tuple,list):
+                ##list of directories to join are passed along...
+                self.img = lib.common.load_img(*img)
+            else:
+                ##string name (already passed through os.path.join?)
+                self.img = lib.common.load_img(img)
         else:
             self.img=img
         
@@ -207,7 +212,7 @@ class block(object):
         
 class bgnd_block(block):
     def __init__(self):
-        block.__init__(self,os.path.join('gui','programmer','background_bgnd.png'))
+        block.__init__(self,('gui','programmer','background_bgnd.png'))
         self.link_down  = False
         self.link_up    = True
         self.blank = True
@@ -263,7 +268,7 @@ class vertical_block(block):
         
 class pfwd_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img(os.path.join('gui','programmer','blank_vert.png'))
+        img=lib.common.load_img('gui','programmer','blank_vert.png')
         lable = lib.common.font.render('Forward',True,(255,0,0)).convert_alpha()
         num=True
         vertical_block.__init__(self,img,lable,num)
@@ -276,7 +281,7 @@ class pfwd_block(vertical_block):
         
 class trnl_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img(os.path.join('gui','programmer','blank_vert.png'))
+        img=lib.common.load_img('gui','programmer','blank_vert.png')
         lable = lib.common.font.render('Turn Left',True,(255,0,0)).convert_alpha()
         vertical_block.__init__(self,img,lable)
         
@@ -285,7 +290,7 @@ class trnl_block(vertical_block):
 
 class trnr_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img(os.path.join('gui','programmer','blank_vert.png'))
+        img=lib.common.load_img('gui','programmer','blank_vert.png')
         lable = lib.common.font.render('Turn Right',True,(255,0,0)).convert_alpha()
         vertical_block.__init__(self,img,lable)
         
@@ -294,7 +299,7 @@ class trnr_block(vertical_block):
         
 class main_block(block):
     def __init__(self,loc):
-        block.__init__(self,os.path.join('gui','programmer','main_main.png'))
+        block.__init__(self,('gui','programmer','main_main.png'))
         self.link_down=True
         self.loc=loc
     def action(self,robot):

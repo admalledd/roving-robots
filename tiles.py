@@ -64,9 +64,9 @@ class Tile_Cache(object):
                     #see if similarly tagged img is in the cache...
                     imgname=f.split('.')[0].split('_')[1]
                     if imgname in self.cache:
-                        self.cache[imgname].append(lib.common.load_img(os.path.join(dir,f)))
+                        self.cache[imgname].append(lib.common.load_img(dir,f))
                     else:
-                        self.cache[imgname]= [lib.common.load_img(os.path.join(dir,f))]
+                        self.cache[imgname]= [lib.common.load_img(dir,f)]
                         
         if lib.common.debug() >2:
             import pprint

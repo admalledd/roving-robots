@@ -58,12 +58,6 @@ def main(options):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        #eventually change to be based off the optparse module instead...
-		##randy:: ill work on that!
-        
-        usage='''<script.py> -v$(NUMBER = 0) -l[--log-file] $(LOG_FILE_NAME = roving-robots.log)'''
-        if sys.argv[1].startswith('-v'):
-            lib.common.debug(len(sys.argv[1][1:]))
-    if lib.common.debug()>0:logger.info('debug level is:%s'%lib.common.debug())
+        print 'i really need to add those command line options huh?'
     main(None)
     

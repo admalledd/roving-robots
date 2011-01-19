@@ -9,7 +9,7 @@ set_dir code doc:::
     tries three different ways of finding the data files
         1:::see if the current directory has a directory {data}
         2:::check if directory up one has {data}
-        3:::if none of these worked, find the location of this file and use it.'''
+        3:::if none of these worked, find the location of this file and use its parent directory.'''
 import os
 import logging
 import textwrap
@@ -20,10 +20,11 @@ import lib.decorators
 
 _debug = 0
 def debug(value=None):
-    '''function so set or return current debug level'''
+    '''function to set or return current debug level'''
     global _debug
     if value is None:
         return _debug
+    logger.warn('debug level setting function to be removed soon!')
     _debug = value
     if value>1:
         root = logging.getLogger('')

@@ -1,5 +1,6 @@
 '''configuration/menu system
-
+note::: 
+    make sure that all key short cuts have mapped GUI interface
 key components: 
     1:change_config(screen)
         exactly what it says
@@ -61,14 +62,18 @@ def change_config(screen):
                 keycfg._sections['keymap']={
                                                 '__name__':'keymap',#was part of the original dict...
                                                 'open_programmer':K_p,
+                                                'open_config':K_c,
                                                 'open_menu':K_ESCAPE,
+                                                'open_factory':K_t,
                                                 'goto_robot':K_g,
+                                                'goto_base':K_b,
                                                 'follow_robot':K_f,
                                                 'map_up':K_UP,
                                                 'map_down':K_DOWN,
                                                 'map_left':K_LEFT,
-                                                'map_right':K_RIGHT
-                                                
+                                                'map_right':K_RIGHT,
+                                                'program_run':K_r,
+                                                'program_stop':K_x
                                            }
                 
                 keycfg.write(open(os.path.join(lib.common.curdir,'config.ini'),'w'))

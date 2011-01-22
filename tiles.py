@@ -3,7 +3,7 @@ import pygame
 import lib
 import random
 tile_cache=None
-prog_cache=None
+
 walkable=tuple()
 class tile(object):
     def __init__(self,type=None):
@@ -82,8 +82,6 @@ class Tile_Cache(object):
 def find_tiles():
     global tile_cache
     tile_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','tiles'))
-    #global prog_cache
-    #prog_cache=Tile_Cache(os.path.join(lib.common.curdir,'data','img','gui','programmer'))
     
 def set_tile(loc,type):
         map.map[loc][0].set_tile(type)

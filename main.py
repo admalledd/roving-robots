@@ -1,5 +1,10 @@
 '''an attempt (however poorly) to recreate the game known as stormrunner from lego
-into a python game.'''
+into a python game.
+
+TODO:::
+ask pypy if it can help with @propget speeds??
+remake map_overlay concept
+'''
 import sys
 import logging
 logger = logging.getLogger('main')
@@ -49,6 +54,10 @@ def main(options):
                 elif event.key == config.keycfg.getint('keymap','open_programmer'):
                     ##warning:: blocking code
                     v.code = programmer.create_programming_gui(screen,v.code)
+                elif event.key == K_SPACE:
+                    import test_overlay
+                    test_overlay.test(map.map)
+        map.map.update_overlays()
         screen.fill((0, 0, 0))
         map.map.draw(screen)
         v.events(events)
@@ -59,5 +68,6 @@ def main(options):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         print 'i really need to add those command line options huh?'
+        lib.common.debug(int(sys.argv[1]))
     main(None)
     

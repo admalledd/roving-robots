@@ -48,7 +48,58 @@ class MAP(object):
                 self.map[(x,y)]=[tclass(),tmp,color]
         self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height),pygame.SRCALPHA)
         
+        ##set location _AND_ render! (remember @propset)
         self.loc=(0,0)
+        
+        ##overlay mechanism:::
+        ##  dict of {map_loc:overlay_object}
+        ##  an overlay object is something that:::
+        ##      1:has a obj.draw(screen) function  (and it does draw to screen! no buffers!)
+        ##      2:has a obj.ticktime variable, showing how often to update (see add_overlay to know the numbers allowed)
+        ##      3:has a obj.update(ms) function, taking time since last update (if needed)
+        ##  
+        ##  note: your object will run only at most once a frame (game trys to run at 30 fps)
+        ##  
+        self.overlays={'times':[]}
+        self.timer=pygame.time.Clock()
+        self._ticktime=0##last run timer tick (eg 500)
+        self._tickcount=0##current/last time from reset
+    def add_overlay(self,loc,obj):
+        if loc in self.overlays:
+            print 'what? overlay exists!'
+            import pdb;pdb.set_trace()
+        else:
+            self.overlays[obj.ticktime]=[]
+            self.overlays[obj.ticktime].append(loc)
+        
+        if len(self.overlays[obj.ticktime]) == 1:
+            self.overlays['times'].append(obj.ticktime)
+            self.overlays['times'].sort()    
+        self.overlays[loc]=obj
+        
+    def remove_overlay(self,loc):
+        
+        ##remove object as soon as possible
+        tmp = self.overlays[loc]
+        del self.overlays[loc]
+        self.overlays[tmp.ticktime].remove(loc)
+        if len(self.overlays[tmp.ticktime]) == 0:
+            self.overlays['times'].remove(tmp.ticktime)
+            self.overlays['times'].sort()    
+        del tmp
+    def update_overlays(self):
+        ##calculate timetick first...
+        self._tickcount +=self.timer.tick()
+        if self._tickcount > self._ticktime:
+            curtimes=[]
+            for time in self.overlays['times']:
+                if time > self._ticktime:
+                    curtimes.append(time)
+            print curtimes
+            if len(curtimes) > 1:
+                print self.overlays
+                raise SystemExit
+        
     def render(self):
         '''iterate through every tile and move it and draw the contents'''
         logger.debug('rendering map::(%s,%s)'%(self.loc))

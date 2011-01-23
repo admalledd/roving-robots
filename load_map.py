@@ -13,7 +13,7 @@ import pygame
 import tiles
 import lib
 import map
-import items
+import overlays
 
 import ConfigParser
 
@@ -39,7 +39,13 @@ def load_map(map_name):
     map.cfg.read(os.path.join(lib.common.curdir,'data','maps',map_name+'.ini'))
     
     #set walkable tiles... (any and all other configs accesable through map.cfg)
-    tiles.walkable=map.cfg.get('main','walkable').split('|')
+    tmp = map.cfg.items('moveable')
+    for i,t in enumerate(tmp):
+        tmp[i] = tmp[i][::-1]
+        if tmp[i][0].count('|') > 0:
+            for key in tmp[i][0].split('|'):
+                tiles.moveable[key] = tmp[i][1]
+    logger.info('moveable tile types:%s'%tiles.moveable)
     
     #get tile types (.=wwww @=bbbb e=(energry,%(.)))
     tile_names = dict(map.cfg.items('tiles'))
@@ -60,8 +66,10 @@ def load_map(map_name):
                 else:
                     map.map.map[(i,j)][0].set_tile(tile_names[data[j][i]][0])
                     #create item...
-                    map.map.map[(i,j)][0].item =  eval('items.'+tile_names[data[j][i]][1])
+                    map.map.add_overlay((i,j),eval('overlays.'+tile_names[data[j][i]][1]))
             #we dont have the tile data... set as error tile...
             else:
                     
                 map.map.map[(i,j)][0].set_tile('uuuu')
+                
+    

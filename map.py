@@ -65,16 +65,21 @@ class MAP(object):
         self._ticktime=0##last run timer tick (eg 500)
         self._tickcount=0##current/last time from reset
     def add_overlay(self,loc,obj):
-        if loc in self.overlays:
-            print 'what? overlay exists!'
-            import pdb;pdb.set_trace()
-        else:
-            self.overlays[obj.ticktime]=[]
-            self.overlays[obj.ticktime].append(loc)
         
-        if len(self.overlays[obj.ticktime]) == 1:
+        ##first, check if this is a new ticktime:
+        if obj.ticktime not in self.overlays['times']:
             self.overlays['times'].append(obj.ticktime)
             self.overlays['times'].sort()    
+            ##if we dont have it in times, we must also not have it in self.overlays[obj.ticktime]
+            self.overlays[obj.ticktime]=[]
+        
+        ##simple test for now, maybe have it just silently ignore the error? what should i do? i will wait untill i develop more
+        if loc in self.overlays:
+            print 'what? overlay exists!'
+            return
+        else:
+            self.overlays[obj.ticktime].append(loc)
+        ##finaly, add location/object pairing
         self.overlays[loc]=obj
         
     def remove_overlay(self,loc):
@@ -83,23 +88,46 @@ class MAP(object):
         tmp = self.overlays[loc]
         del self.overlays[loc]
         self.overlays[tmp.ticktime].remove(loc)
+        ##is this the last of overlays at a specific time tick?
         if len(self.overlays[tmp.ticktime]) == 0:
             self.overlays['times'].remove(tmp.ticktime)
             self.overlays['times'].sort()    
         del tmp
-    def update_overlays(self):
+    def update_overlays(self,screen):
+        '''if overlay time ticker doesnt pan out, we /can/ just iterate through self.overlays.iteritems()-->obj.ticktime
+        
+        note, should we also draw the overlays here? for now we will, for it is mighty convieniant placement
+        
+        for draw code, we pass:
+            1: screen
+            2: loc
+            3: map[loc][1].center
+            4: actual time from time tick (eg, we cant hit 500 ms exactly)
+            5: map (self here)
+        '''
+        
+        
         ##calculate timetick first...
         self._tickcount +=self.timer.tick()
         if self._tickcount > self._ticktime:
             curtimes=[]
             for time in self.overlays['times']:
-                if time > self._ticktime:
+                if time < self._tickcount:
                     curtimes.append(time)
-            print curtimes
-            if len(curtimes) > 1:
-                print self.overlays
-                raise SystemExit
-        
+                    for loc in self.overlays[time]:
+                        self.overlays[loc].update(screen,loc,self.map[loc][1].center,self._tickcount,self)
+            if len(curtimes) != 0:
+                self._ticktime = curtimes[-1]
+                
+        if self._tickcount > 60000:
+            #here we call all 59+ second objects and reset the counter
+            self._tickcount = 0
+            self._ticktime = 0
+            for time in self.overlays['times']:
+                if time >= 59000:
+                    for loc in self.overlays[time]:
+                        self.overlays[loc].update(screen,loc,self.map[loc][1].center,self._tickcount,self)
+                        
     def render(self):
         '''iterate through every tile and move it and draw the contents'''
         logger.debug('rendering map::(%s,%s)'%(self.loc))

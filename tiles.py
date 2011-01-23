@@ -4,16 +4,15 @@ import lib
 import random
 tile_cache=None
 
-walkable=tuple()
+moveable={}##set from load_map.py
 class tile(object):
     def __init__(self,type=None):
         if type==None:
             #get a random tile from the cache
             #to be depreciated...
             self.set_tile()
-        self.walkable=False
+        self.vmove=tuple()
         
-        self.item = None
     def set_tile(self,type=None):
         if type is not None and len(type) < 4:
             raise Exception('tile type MUST be a four-charichtar length string!')
@@ -27,22 +26,20 @@ class tile(object):
             except:
                 self.surf = tile_cache.get('uuuu')
         if type == None:
-            self.walkable = False
-        elif type in  walkable:
-            self.walkable = True
+            self.vmove = []
+        elif type in  moveable:
+            self.vmove = moveable[type]
         else:
-            self.walkable = False
+            self.vmove = []
+            
+        
             
     def draw(self,screen,rect):
         screen.blit(self.surf,rect)
-        if self.item:
-            self.item.draw(screen,rect)
+        
     @lib.decorators.propget
     def walkable(self):
-        if self.item:
-            return False
-        else:
-            return self._walkable
+        self._walkable
     @lib.decorators.propset
     def walkable(self, value):
         self._walkable=value

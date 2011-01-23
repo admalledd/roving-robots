@@ -24,6 +24,7 @@ import load_map
 import vehicle
 import programmer
 
+
 def main(options):
     pygame.init()
     screen = pygame.display.set_mode((800, 600),pygame.SRCALPHA)
@@ -32,13 +33,17 @@ def main(options):
     #load map... (can be called again(?) to change to a new map...)
     load_map.load_map('test_map')
     
-    v=vehicle.rcx()
     
+    v=vehicle.rcx()
+    clock=pygame.time.Clock()
     while True:
-        pygame.time.wait(10)
+        clock.tick(30)
         
+        
+        screen.fill((0, 0, 0))
         
         events = pygame.event.get()
+        
         for event in events:
             if event.type == QUIT:
                 pygame.quit()
@@ -54,12 +59,11 @@ def main(options):
                 elif event.key == config.keycfg.getint('keymap','open_programmer'):
                     ##warning:: blocking code
                     v.code = programmer.create_programming_gui(screen,v.code)
-                elif event.key == K_SPACE:
-                    import test_overlay
-                    test_overlay.test(map.map)
-        map.map.update_overlays()
-        screen.fill((0, 0, 0))
+                
+        
         map.map.draw(screen)
+        map.map.update_overlays(screen)
+        
         v.events(events)
         v.draw(screen)
         

@@ -10,6 +10,7 @@ from lib.decorators import *
 
 import map
 import programmer
+import overlays
 
 class rcx(object):
 
@@ -29,6 +30,8 @@ class rcx(object):
         self.arm=None
         
         self.ani_step = 0
+        
+        self.vmove='walkable' ##type of terrain i can move across
         
         ##removed code sample, merging pgrid.py into programmer.py
         self.code=None
@@ -69,7 +72,7 @@ class rcx(object):
                     self.run_cmd()
     def move_fwd(self):
         '''programming tool's job is to decide how often to run these things...'''
-        if self.front_sq()[0].walkable:
+        if not self.front_sq() in map.map.overlays and self.vmove in map.map.map[self.front_sq()][0].vmove:
             if self.direction == 'w':
                 self.loc=(self.loc[0]-1,self.loc[1])
             elif self.direction == 'e':
@@ -83,8 +86,7 @@ class rcx(object):
             self.play_ani('move_err:%s'%self.direction)
     def move_bck(self):
         '''programming tool's job is to decide how often to run these things...'''
-        
-        if self.back_sq()[0].walkable:
+        if not self.back_sq() in map.map.overlays and self.vmove in map.map.map[self.back_sq()][0].vmove:
             if self.direction == 'e':
                 self.loc=(self.loc[0]-1,self.loc[1])
             elif self.direction == 'w':
@@ -138,27 +140,27 @@ class rcx(object):
         
     def front_sq(self):
         if self.direction == 'w':
-            return map.map.map[(self.loc[0]-1,self.loc[1])]
+            return (self.loc[0]-1,self.loc[1])
         elif self.direction == 'e':
-            return map.map.map[(self.loc[0]+1,self.loc[1])]
+            return (self.loc[0]+1,self.loc[1])
                 
         elif self.direction == 'n':
-            return map.map.map[(self.loc[0],self.loc[1]-1)]
+            return (self.loc[0],self.loc[1]-1)
                 
         elif self.direction == 's':
-            return map.map.map[(self.loc[0],self.loc[1]+1)]
+            return (self.loc[0],self.loc[1]+1)
                 
     def back_sq(self):
         if self.direction == 'e':
-            return map.map.map[(self.loc[0]-1,self.loc[1])]
+            return (self.loc[0]-1,self.loc[1])
         elif self.direction == 'w':
-            return map.map.map[(self.loc[0]+1,self.loc[1])]
+            return (self.loc[0]+1,self.loc[1])
                 
         elif self.direction == 's':
-            return map.map.map[(self.loc[0],self.loc[1]-1)]
+            return (self.loc[0],self.loc[1]-1)
                 
         elif self.direction == 'n':
-            return map.map.map[(self.loc[0],self.loc[1]+1)]
+            return (self.loc[0],self.loc[1]+1)
     
     @propget
     def loc(self):
@@ -172,9 +174,9 @@ class rcx(object):
     def pick_up(self):
     
         if not self.arm:
-            if self.front_sq()[0].item:
-                self.arm = self.front_sq()[0].item
-                self.front_sq()[0].item = None
+            if self.front_sq() in map.map.overlays and isinstance(map.map.overlays[self.front_sq()],overlays.item):
+                self.arm = map.map.overlays[self.front_sq()]
+                map.map.remove_overlay(self.front_sq())
                 self.play_sound('pick_up_item')
                 self.play_ani('pick_up:%s'%self.direction)
                 map.map.render()
@@ -188,8 +190,8 @@ class rcx(object):
     def put_down(self):
     
         if self.arm:
-            if not self.front_sq()[0].item:
-                self.front_sq()[0].item = self.arm
+            if not self.front_sq() in map.map.overlays:
+                map.map.add_overlay(self.front_sq(), self.arm)
                 self.arm = None
                 self.play_sound('put_down_item')
                 self.play_ani('put_down:%s'%self.direction)

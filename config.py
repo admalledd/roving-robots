@@ -8,7 +8,6 @@ key components:
     2:keymap
         dictionary mapping strings to keys'''
 
-import ConfigParser
 import os
 import logging
 logger=logging.getLogger('config')
@@ -19,9 +18,10 @@ from pygame.locals import *
 import lib
 
 
-keycfg=ConfigParser.ConfigParser()
-keycfg.read(os.path.join(lib.common.curdir,'config.ini'))
-keymap=keycfg._sections['keymap']
+
+
+keycfg=lib.configobj.ConfigObj(os.path.join(lib.common.curdir,'config.ini'))
+keymap=keycfg['keymap']
 
 def change_config(screen):
     
@@ -55,12 +55,11 @@ def change_config(screen):
                 return
             elif event.type == KEYDOWN and event.key == K_SPACE:
                 print keymap
-                #keymap['open_proggrammer']=K_p
+                keymap['open_programmer']=K_p
                 
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 logger.info('default keymap loaded')
-                keycfg._sections['keymap']={
-                                                '__name__':'keymap',#was part of the original dict...
+                keycfg['keymap']={
                                                 'open_programmer':K_p,
                                                 'open_config':K_c,
                                                 'open_menu':K_ESCAPE,
@@ -76,7 +75,7 @@ def change_config(screen):
                                                 'program_stop':K_x
                                            }
                 
-                keycfg.write(open(os.path.join(lib.common.curdir,'config.ini'),'w'))
+                keycfg.write()
                 
         for line,rect in info:
             screen.blit(line,rect)

@@ -36,11 +36,12 @@ def main(options):
     
     v=vehicle.rcx()
     clock=pygame.time.Clock()
+    
     while True:
         clock.tick(30)
         
         
-        screen.fill((0, 0, 0))
+        
         
         events = pygame.event.get()
         
@@ -50,16 +51,18 @@ def main(options):
                 return None
             elif event.type == MOUSEBUTTONDOWN and event.button==1:
                 logger.info(map.map.click_engine(event.pos))
-			
+            
             elif event.type == KEYDOWN:
-                if event.key == config.keycfg.getint('keymap','open_menu'):
+                if event.key == config.keymap['open_menu']:
                     ##to be changed later to actually open a main menu like thingy with save and stuff...
                     config.change_config(screen)
             
-                elif event.key == config.keycfg.getint('keymap','open_programmer'):
+                elif event.key == config.keymap['open_programmer']:
                     ##warning:: blocking code
                     v.code = programmer.create_programming_gui(screen,v.code)
-                
+        ##we clear the screen after events because anything that can occur in the events should be 'blocking'
+        ##meaning that they actualy run thier own loop for a bit
+        screen.fill((0, 0, 0))
         
         map.map.draw(screen)
         map.map.update_overlays(screen)
@@ -73,5 +76,6 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         print 'i really need to add those command line options huh?'
         lib.common.debug(int(sys.argv[1]))
+    lib.common.debug(2)
     main(None)
     

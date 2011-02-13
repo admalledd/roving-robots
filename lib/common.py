@@ -18,17 +18,53 @@ import pygame
 
 import lib.decorators
 
+def p_rents(lo):
+    '''
+    a function to log where a function got called from
+    '''
+    import inspect ##because this fuinction should only be called during debug, i dont mind about the 'lag' here
+    buf=[]
+    for i in reversed(inspect.stack()[1:-1]):
+        tmp=[]
+        ##first, the path of the script
+        if i[1].startswith(curdir):
+            filename = i[1][len(curdir)+1:]
+        else:
+            filename=i[1]
+        ##add line number
+        lineno = str(i[2])
+        ##add class ??? (also, check if it IS a class that we need info from)
+        if 'self' in i[0].f_locals:
+            cls = str(type(i[0].f_locals['self']))[8:-2]
+            cls = str(cls.split('.')[1:])[2:-2]
+        else:
+            cls = ''
+            
+        ##add function of class/file
+        func = i[3]
+        
+        buf.append("%s:%s:%s:%s()"%(filename,lineno,cls,func))
+        
+    path=" >> ".join(buf)
+    ##finaly, use logging instance to log thins thing for us, saving it to file, printing to terminal and whatnot
+    lo.debug('call stack: %s'%path)
+    
 _debug = 0
 def debug(value=None):
-    '''function to set or return current debug level'''
+    '''function to set or return current debug level
+    debug levels:
+        0: normal, log info and higher to terminal, rest to roving-robots.log
+        1: basic, log debug to console
+        2: lots, log many annoying things to consol
+        3: lagger, log enough that you notice the lag!'''
     global _debug
     if value is None:
         return _debug
-    logger.warn('debug level setting function to be removed soon!')
     _debug = value
     if value>1:
         root = logging.getLogger('')
         root.handlers[1].setLevel(logging.DEBUG)
+        
     else:
         root = logging.getLogger('')
         root.handlers[1].setLevel(logging.info)

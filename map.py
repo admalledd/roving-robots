@@ -58,7 +58,7 @@ class MAP(object):
         
         ##simple test for now, maybe have it just silently ignore the error? what should i do? i will wait untill i develop more
         if loc in self.overlays:
-            print 'what? overlay exists!'
+            logger.error('what? overlay exists::%s  %s'%(loc,obj))
             return
         ##finaly, add location/object pairing
         self.overlays[loc]=obj
@@ -76,7 +76,7 @@ class MAP(object):
             1: screen
             2: loc
             3: map[loc][1].center
-            4: actual time from time tick (eg, we cant hit 500 ms exactly)
+            4: actual time from time tick (time since last update)
             5: map (self here)
         '''
         
@@ -84,12 +84,16 @@ class MAP(object):
         ##calculate timetick first...
         diff=self.timer.tick()
         for loc in self.overlays.iterkeys():
+            diff+=self.timer.tick()##incase an overlay takes a long time to update, add time to diff
             self.overlays[loc].update(screen,loc,self.map[loc][1].center,diff,self)
-        
+        if lib.common.debug() > 2:
+            logger.debug('overlay update time:%s'%diff)
         
     def render(self):
         '''iterate through every tile and move it and draw the contents'''
         logger.debug('rendering map::(%s,%s)'%(self.loc))
+        if lib.common.debug()>1:
+            lib.common.p_rents(logger)
         self.surf.fill((0,0,0))
         for x in range(self.main_rect.width/self.sub_rect.width):
             for y in range(self.main_rect.height/self.sub_rect.height):

@@ -8,6 +8,7 @@ from pygame.locals import *
 import map
 import input
 import lib
+import config
 import blocks
 MAIN_BLOCK=(5,0)
 class remover(object):
@@ -95,7 +96,7 @@ def create_programming_gui(screen,pmap):
         events = pygame.event.get()
         
         for event in events:
-            if (event.type == KEYDOWN and event.key == K_p):
+            if (event.type == KEYDOWN and event.key == config.keymap['open_programmer']):
                 ##time to return a pmap object, clean up things first though...
                 del intr
                 input.mouse.cur_sel = None
@@ -103,13 +104,13 @@ def create_programming_gui(screen,pmap):
                 ##done cleaning, return pmap
                 return pmap
             if event.type == KEYDOWN:
-                if event.key == K_LEFT:
+                if event.key == config.keymap['map_left']:
                     pmap.loc =pmap.loc[0]+1, pmap.loc[1]
-                elif event.key == K_RIGHT:
+                elif event.key == config.keymap['map_right']:
                     pmap.loc =pmap.loc[0]-1, pmap.loc[1]
-                elif event.key == K_UP:
+                elif event.key == config.keymap['map_up']:
                     pmap.loc =pmap.loc[0], pmap.loc[1]+1
-                elif event.key == K_DOWN:
+                elif event.key == config.keymap['map_down']:
                     pmap.loc =pmap.loc[0], pmap.loc[1]-1
                 
             elif event.type == MOUSEBUTTONDOWN and event.button==1:

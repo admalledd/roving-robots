@@ -11,6 +11,7 @@ from lib.decorators import *
 import map
 import programmer
 import overlays
+import config
 
 class rcx(object):
 
@@ -55,13 +56,13 @@ class rcx(object):
     def events(self,events):
         for event in events:
             if event.type == KEYDOWN:
-                if event.key == K_LEFT:
+                if event.key == config.keymap['map_left']:
                     self.turn('left')
-                elif event.key == K_RIGHT:
+                elif event.key == config.keymap['map_right']:
                     self.turn('right')
-                elif event.key == K_UP:
+                elif event.key == config.keymap['map_up']:
                     self.move_fwd()
-                elif event.key == K_DOWN:
+                elif event.key == config.keymap['map_down']:
                     self.move_bck()
                 elif event.key == K_SPACE:
                     if self.arm:

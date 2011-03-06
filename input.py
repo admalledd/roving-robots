@@ -53,7 +53,7 @@ class Input(object):
         self.options = Config(options, ['x', '0'], ['y', '0'], ['font', 'pygame.font.Font(lib.common.os.path.join(lib.common.curdir,"data","fonts","freesansbold.ttf"), 32)'],
                               ['color', '(0,0,0)'], ['restricted', '\'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&\\\'()*+,-./:;<=>?@[\]^_`{|}~\''],
                               ['maxlength', '-1'], ['prompt', '\'\''])
-        
+        self.initopts=options
         self.font = self.options.font
         self.color = self.options.color
         self.restricted = self.options.restricted
@@ -71,7 +71,15 @@ class Input(object):
         self.rect=self.text.get_rect()
         self.rect.midtop = self.options.x,self.options.y
         self.active = False
-    
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        state.pop('font')
+        state.pop('options')
+        state.pop('text')
+        return state
+    def __setstate__(self,state):
+        Input.__init__(self,**state['initopts'])
+        self.__dict__.update(state)
     @lib.decorators.propget
     def value(self):
         return self._value

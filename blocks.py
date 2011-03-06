@@ -60,7 +60,7 @@ class block(object):
         
         #can this block be dragged? (override in sub classes!)
         self.draggable = False
-        
+        self.color = (255,255,0)#outline color
     def draw(self,screen,rect):
         
         self.surf.blit(self.img,(0,0))
@@ -203,16 +203,29 @@ class block(object):
     def drop(self,pos,pmap):
         '''finalize a drop. actually places block on grid'''
         pass
-    def save(self):
-        '''return a string which will allow recreation of this block (type,lable,num,pos,binding)'''
-        pass
-    def load(self,s):
-        '''places block and recreates block based on "s" '''
-        pass
-        
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        state.pop('lable')
+        state.pop('surf')
+        state.pop('img')
+        #if not isinstance(self,bgnd_block):
+        #    print self,self.dblock
+        return state
+    def __setstate__(self,state):
+        self.__dict__.update(state)
+        if hasattr(self,'text'):
+            self.lable=lib.common.font.render(*self.text).convert_alpha()
+        else:
+            self.lable = None
+        self.img=lib.common.load_img(*self.file)
+        self.surf = pygame.Surface((80,80),pygame.SRCALPHA)
+        #if not isinstance(self,bgnd_block):
+        #    print self,self.dblock
+            
 class bgnd_block(block):
     def __init__(self):
-        block.__init__(self,('gui','programmer','background_bgnd.png'))
+        self.file=('gui','programmer','background_bgnd.png')
+        block.__init__(self,self.file)
         self.link_down  = False
         self.link_up    = True
         self.blank = True
@@ -268,8 +281,10 @@ class vertical_block(block):
         
 class pfwd_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img('gui','programmer','blank_vert.png')
-        lable = lib.common.font.render('Forward',True,(255,0,0)).convert_alpha()
+        self.file=('gui','programmer','blank_vert.png')
+        img=lib.common.load_img(*self.file)
+        self.text=('Forward',True,(255,0,0))
+        lable = lib.common.font.render(*self.text).convert_alpha()
         num=True
         vertical_block.__init__(self,img,lable,num)
         
@@ -281,8 +296,10 @@ class pfwd_block(vertical_block):
         
 class trnl_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img('gui','programmer','blank_vert.png')
-        lable = lib.common.font.render('Turn Left',True,(255,0,0)).convert_alpha()
+        self.file = ('gui','programmer','blank_vert.png')
+        img=lib.common.load_img(*self.file)
+        self.text=('Turn Left',True,(255,0,0))
+        lable = lib.common.font.render(*self.text).convert_alpha()
         vertical_block.__init__(self,img,lable)
         
     def action(self,robot):
@@ -290,8 +307,10 @@ class trnl_block(vertical_block):
 
 class trnr_block(vertical_block):
     def __init__(self):
-        img=lib.common.load_img('gui','programmer','blank_vert.png')
-        lable = lib.common.font.render('Turn Right',True,(255,0,0)).convert_alpha()
+        self.file = ('gui','programmer','blank_vert.png')
+        img=lib.common.load_img(*self.file)
+        self.text=('Turn Right',True,(255,0,0))
+        lable = lib.common.font.render(*self.text).convert_alpha()
         vertical_block.__init__(self,img,lable)
         
     def action(self,robot):
@@ -299,7 +318,8 @@ class trnr_block(vertical_block):
         
 class main_block(block):
     def __init__(self,loc):
-        block.__init__(self,('gui','programmer','main_main.png'))
+        self.file=('gui','programmer','main_main.png')
+        block.__init__(self,self.file)
         self.link_down=True
         self.loc=loc
     def action(self,robot):

@@ -18,7 +18,7 @@ class rcx(object):
     def __init__(self):
         self.loc=(8,6)
         
-        self.img = lib.common.load_img(os.path.join('rcx','test.bmp')).convert()
+        self.img = lib.common.load_img('rcx','test.bmp').convert()#why?##good question
         self.img.set_colorkey((255,0,255))
         
         self.rect = self.img.get_rect()
@@ -254,4 +254,12 @@ class rcx(object):
         self.cur_cmd.action(self)
         self.cur_cmd = self.cur_cmd.next(self)
         
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        state.pop('img')
+        return state
+    def __setstate__(self,state):
+        self.__dict__.update(state)
+        self.img = lib.common.load_img('rcx','test.bmp').convert()#why?##good question
+        self.img.set_colorkey((255,0,255))
         

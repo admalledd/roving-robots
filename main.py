@@ -6,6 +6,8 @@ ask pypy if it can help with @propget speeds??
 remake map_overlay concept
 '''
 import sys
+try:import cPickle___ as pickle
+except: import pickle
 import logging
 logger = logging.getLogger('main')
 import pygame
@@ -60,6 +62,20 @@ def main(options):
                 elif event.key == config.keymap['open_programmer']:
                     ##warning:: blocking code
                     v.code = programmer.create_programming_gui(screen,v.code)
+                elif event.key == K_x:
+                    #import cPickle as pickle
+                    f=open('data/saves/test.pkl','wb')
+                    p=pickle.Pickler(f,0)
+                    p.dump(map.map)
+                    p.dump(v)
+                    f.close()
+                elif event.key == K_z:
+                    #import cPickle as pickle
+                    f=open('data/saves/test.pkl','rb')
+                    unp=pickle.Unpickler(f)
+                    map.map=unp.load()
+                    v=unp.load()
+                    f.close()
         ##we clear the screen after events because anything that can occur in the events should be 'blocking'
         ##meaning that they actualy run thier own loop for a bit
         screen.fill((0, 0, 0))

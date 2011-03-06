@@ -21,9 +21,9 @@ def load_map(map_name):
     #open/convert map:
     data=open(os.path.join(lib.common.curdir,'data','maps',map_name+'.map'),'r').read().split('\n')
     
-    
+    #data[0] is one row (x) data is all the rows (y)
     map_size=len(data[0]),len(data)-1
-    logger.info("map size:(%s , %s)"%(len(data),len(data[0])))
+    logger.info("map size:(%s , %s)"%(len(data[0]),len(data)))
     
     #get a random tiles size...
     sub_rect= tiles.tile().surf.get_rect()

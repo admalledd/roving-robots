@@ -59,21 +59,7 @@ def change_config(screen):
                 
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 logger.info('default keymap loaded')
-                keycfg['keymap']={
-                                                'open_programmer':K_p,
-                                                'open_config':K_c,
-                                                'open_menu':K_ESCAPE,
-                                                'open_factory':K_t,
-                                                'goto_robot':K_g,
-                                                'goto_base':K_b,
-                                                'follow_robot':K_f,
-                                                'map_up':K_UP,
-                                                'map_down':K_DOWN,
-                                                'map_left':K_LEFT,
-                                                'map_right':K_RIGHT,
-                                                'program_run':K_r,
-                                                'program_stop':K_x
-                                           }
+                keycfg['keymap']['open_programmer'] =K_p                keycfg['keymap']['open_config']     =K_c                keycfg['keymap']['open_menu']       =K_ESCAPE                keycfg['keymap']['open_factory']    =K_t                keycfg['keymap']['goto_robot']      =K_g                keycfg['keymap']['goto_base']       =K_b                keycfg['keymap']['follow_robot']    =K_f                keycfg['keymap']['map_up']          =K_UP                keycfg['keymap']['map_down']        =K_DOWN                keycfg['keymap']['map_left']        =K_LEFT                keycfg['keymap']['map_right']       =K_RIGHT                keycfg['keymap']['program_run']     =K_r                keycfg['keymap']['program_stop']    =K_x
                 
                 keycfg.write()
                 

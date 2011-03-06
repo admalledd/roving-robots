@@ -43,10 +43,10 @@ class MAP(object):
             for y in range(self.map_size[1]):
                 tmp=pygame.Rect(self.sub_rect.topleft,self.sub_rect.size)
                 tmp.topleft=((self.sub_rect.width*x)+self.main_rect.left,(self.sub_rect.height*y)+self.main_rect.top)
-                color = (255,255,0)
+                
                 #set map items::: tile class, rect, and grid color
-                self.map[(x,y)]=[tclass(),tmp,color]
-        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height),pygame.SRCALPHA)
+                self.map[(x,y)]=[tclass(),tmp]
+        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
         
         ##set location _AND_ render! (remember @propset)
         self.loc=(0,0)
@@ -84,8 +84,11 @@ class MAP(object):
         ##calculate timetick first...
         diff=self.timer.tick()
         for loc in self.overlays.iterkeys():
+            #calculate center of tile (because self.render only updates tiles in view)
+            tmp_r=self.get_tile(loc)[1]
             diff+=self.timer.tick()##incase an overlay takes a long time to update, add time to diff
-            self.overlays[loc].update(screen,loc,self.map[loc][1].center,diff,self)
+            self.overlays[loc].update(screen,loc,tmp_r.center,diff,self)
+            #logger.info("%s::%s"%(self.overlays[loc],self.map[loc][1].center))
         if lib.common.debug() > 2:
             logger.debug('overlay update time:%s'%diff)
         
@@ -99,8 +102,8 @@ class MAP(object):
             for y in range(self.main_rect.height/self.sub_rect.height):
                 try:
                     #set current grid x and y locations
-                    xx=self.loc[0]+x
-                    yy=self.loc[1]+y
+                    xx=self._loc[0]+x
+                    yy=self._loc[1]+y
                     #move the rectangle
                     tmp_r=self.map[(xx,yy)][1]
                     tmp_r.topleft=(x*self.sub_rect.width,
@@ -113,17 +116,16 @@ class MAP(object):
                     if self.main_rect.contains(r_check):
                         #if the rect fits, draw it, else dont
                         self.map[(xx,yy)][0].draw(self.surf,tmp_r)
-                        #self.surf.blit(self.map[(xx,yy)][0].surf,tmp_r)#render tile to map self.surf...
                         
                         ##enable to draw rect outlines
                         if self.show_grid:
-                            pygame.draw.rect(self.surf, self.map[(xx,yy)][2], tmp_r, 1)
+                            pygame.draw.rect(self.surf, self.map[(xx,yy)][0].color, tmp_r, 1)
                         if lib.common.debug() > 0:
                             #render tile number text...
                             text = self.font.render(str((xx,yy)),True,(0,0,255)).convert_alpha()
                             self.surf.blit(text,tmp_r)
                 except KeyError:
-                    pass#key that doesnt exist? how and why?
+                    #key that doesnt exist? how and why?
                     #keys that go out of the map is what happens when we have a blank tile in the viewport...
                     if (xx >= 0 and yy >= 0):
                         if lib.common.debug() >2:
@@ -151,12 +153,12 @@ class MAP(object):
             #fix pos for how far away from tl of screen we are...
             #must be done thanks to psudo surface
             pos=(pos[0]-self.main_rect.left,pos[1]-self.main_rect.top)
-            for x in range(self.map_size[0]):
-                for y in range(self.map_size[1]):
+            for x in range(self.main_rect.width/self.sub_rect.width):
+                for y in range(self.main_rect.height/self.sub_rect.height):
                     try:
                         #set current grid x and y locations
-                        xx=self.loc[0]+(x)
-                        yy=self.loc[1]+(y)
+                        xx=self._loc[0]+(x)
+                        yy=self._loc[1]+(y)
                         if self.map[(xx,yy)][1].collidepoint(pos):
                             logger.debug("%s,%s clicked"%(xx,yy))
                             return (xx,yy)
@@ -180,10 +182,34 @@ class MAP(object):
         now, if only there was a way to get pydev to understand this...'''
         self._loc=value
         self.render()
+    def get_tile(self,loc):
+        tile=self.map[loc]
+        tile[1]=pygame.Rect(tile[1])#new rect, because we update the location of it...
+        #xx=self._loc[0]+loc[0]
+        xx=loc[0]-self._loc[0]
+        #yy=self._loc[1]+loc[1]
+        yy=loc[1]-self._loc[1]
+        
+        #move the rectangle
+        tile[1].topleft=(xx*self.sub_rect.width,
+                         yy*self.sub_rect.height )
+        return tile
     def tile_gen(self):
         '''a generator using <yeild> to help with iterating over _every_ tile'''
         for x in range(self.map_size[0]-1):
             for y in range(self.map_size[1]-1):
                 yield self.map[(x,y)],(x,y)
 
-
+    def __getstate__(self):
+        
+        state = self.__dict__.copy()
+        state.pop('surf')
+        state.pop('timer')
+        state.pop('font')
+        return state
+    def __setstate__(self,state):
+        self.__dict__=state
+        self.surf=pygame.Surface((self.main_rect.width,self.main_rect.height))
+        self.timer=pygame.time.Clock()
+        self.font=lib.common.font
+        self.render()

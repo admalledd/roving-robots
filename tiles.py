@@ -7,19 +7,22 @@ tile_cache=None
 moveable={}##set from load_map.py
 class tile(object):
     def __init__(self,type=None):
+        '''basic tile class, not much here...
+        self.type is used to re-create tile instance, keep it up to date!'''
         if type==None:
             #get a random tile from the cache
             #to be depreciated...
             self.set_tile()
         self.vmove=tuple()
-        
+        self.color = (255,255,0)
     def set_tile(self,type=None):
         if type is not None and len(type) < 4:
             raise Exception('tile type MUST be a four-charichtar length string!')
         self.type=type
         if type=='rand':
             #get a random tile from the cache
-            self.surf=tile_cache.get(tile_cache.cache.keys()[int(random.random()*len(tile_cache.cache.keys()))])
+            self.type=tile_cache.cache.keys()[int(random.random()*len(tile_cache.cache.keys()))]
+            self.surf=tile_cache.get(self.type)
         else:
             try:
                 self.surf = tile_cache.get(type)
@@ -32,8 +35,6 @@ class tile(object):
         else:
             self.vmove = []
             
-        
-            
     def draw(self,screen,rect):
         screen.blit(self.surf,rect)
         
@@ -43,6 +44,14 @@ class tile(object):
     @lib.decorators.propset
     def walkable(self, value):
         self._walkable=value
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        state.pop('surf')
+        return state
+    def __setstate__(self,state):
+        self.__dict__.update(state)
+        self.set_tile(self.type)
+        
 
 class Tile_Cache(object):
     def __init__(self,path):
